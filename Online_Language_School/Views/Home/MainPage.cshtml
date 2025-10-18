@@ -1,0 +1,146 @@
+﻿@{
+    ViewData["Title"] = "Online Language School";
+    Layout = null;
+    <!-- повноекранна сторінка -->
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #222222;
+            --accent-color: #4e73df;
+            --secondary-color: #1cc88a;
+        }
+
+        body.dark {
+            --bg-color: #1e1e1e;
+            --text-color: #f1f1f1;
+            --accent-color: #90caf9;
+            --secondary-color: #66bb6a;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+        }
+
+        /* Sidebar */
+        nav {
+            position: fixed;
+            top: 0; left: 0;
+            width: 220px;
+            height: 100vh;
+            background: var(--accent-color);
+            color: #fff;
+            padding: 20px;
+        }
+        nav h2 { margin-top: 0; }
+        nav ul { list-style: none; padding: 0; }
+        nav ul li { margin: 15px 0; }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover { text-decoration: underline; }
+
+        /* Main content */
+        main {
+            margin-left: 240px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: var(--secondary-color);
+            color: #fff;
+            border-radius: 12px;
+        }
+        .hero h1 { margin-bottom: 10px; }
+        .hero button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hero button:hover { background: #f1f1f1; }
+
+        details {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.02);
+        }
+        details summary {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            margin-top: 20px;
+            padding: 8px 12px;
+            background: #fff;
+            color: var(--accent-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav>
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="#about">About school</a></li>
+            <li><a href="#advantages">Advantages</a></li>
+            <li><a href="#contacts">Our contacts</a></li>
+            <li><a href="#news">School news</a></li>
+            <li><a href="/Account/Login">Log in / Sign up</a></li>
+        </ul>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+        @Html.Partial("_Hero")
+        @Html.Partial("_About")
+        @Html.Partial("_Advantages")
+        @Html.Partial("_WhyChooseUs")
+        @Html.Partial("_Footer")
+    </main>
+
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle("dark");
+        }
+    </script>
+</body>
+</html>

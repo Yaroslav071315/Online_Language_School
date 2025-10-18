@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Course Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Ліва панель -->
+        <nav class="col-2 bg-light border-end"
+             style="position:fixed; top:0; left:0; height:100vh; overflow:hidden; padding:20px;">
+            <h5>Menu</h5>
+            <p><em>Note: fixed design, located on the left, always visible, vertical scroll hidden</em></p>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Home")">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Courses")">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Office","Student")">Personal office</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-success text-white mt-2" href="#">Enroll on a course</a></li>
+            </ul>
+            <hr />
+            <footer class="small text-center">
+                <p>📞 info@languageschool.com | +380 67 123 4567</p>
+                <p>🌐 <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">LinkedIn</a></p>
+            </footer>
+        </nav>
+
+        <!-- Центральна частина -->
+        <main class="col-10 offset-2 p-4">
+            <h2 class="mb-4">My Office</h2>
+
+            <!-- 📘 Course Overview -->
+            <section class="mb-5">
+                <h3>📘 Course Overview – English B2</h3>
+                <p>This is a short description of the course. It provides an overview of what students can expect.</p>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>Language:</strong> English</li>
+                            <li class="list-group-item"><strong>Level:</strong> B2</li>
+                            <li class="list-group-item"><strong>Format:</strong> Online, group</li>
+                            <li class="list-group-item"><strong>Duration:</strong> 3 months</li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-lg">Enroll on a course</button>
+            </section>
+
+            <!-- 📖 Information About Course -->
+            <section class="mb-5">
+                <h3>📖 Information About Course</h3>
+                <p>The purpose of this course is to improve students’ speaking and writing skills in English.</p>
+                <p>The structure includes weekly lessons, practical assignments, and interactive discussions.</p>
+                <p>Expected outcomes: improved fluency, better grammar, and confidence in communication.</p>
+                <p>Class structure: 2 lessons per week, each 90 minutes. Educational program includes grammar, vocabulary, and speaking practice.</p>
+            </section>
+
+            <!-- 👩‍🏫 Information About Teacher -->
+            <section class="mb-5">
+                <h3>👩‍🏫 Information About Teacher</h3>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="border p-3 text-center">[Photo Placeholder]</div>
+                    </div>
+                    <div class="col-md-9">
+                        <p><strong>Name:</strong> John Smith</p>
+                        <p><strong>Qualification:</strong> MA in Linguistics</p>
+                        <p><strong>Experience:</strong> 10 years teaching English</p>
+                        <p>John’s teaching style is interactive, student-focused, and practical, ensuring students gain confidence in real-life communication.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ⭐ Feedback Section -->
+            <section class="mb-5">
+                <h3>⭐ Feedback</h3>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Anna K.</h5>
+                        <p class="card-text">This course helped me improve my English significantly. Highly recommend!</p>
+                        <p>Rating: ⭐⭐⭐⭐☆</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Oleh P.</h5>
+                        <p class="card-text">Great teacher and well-structured lessons. I feel more confident now.</p>
+                        <p>Rating: ⭐⭐⭐⭐⭐</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
