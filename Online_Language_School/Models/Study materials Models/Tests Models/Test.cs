@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -15,6 +13,7 @@ namespace Online_Language_School.Models
         public int TimeLimit { get; set; } // minutes
         public int PassingScore { get; set; }
         public bool IsActive { get; set; } = true;
+
 
         // Foreign Key
         public int LessonId { get; set; }

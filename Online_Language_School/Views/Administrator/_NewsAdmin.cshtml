@@ -1,14 +1,100 @@
-﻿<h4>News Management</h4>
-<div class="mb-3">
-    <button class="btn btn-primary btn-sm">Create a news</button>
-    <button class="btn btn-danger btn-sm">Delete a news</button>
-</div>
+﻿@model IEnumerable<Online_Language_School.Models.BlogPost>
 
-<details class="mb-3">
-    <summary>News Item 1</summary>
-    <div class="border p-3">
-        <p><strong>Theme:</strong> New English B2 Group</p>
-        <p><strong>Date:</strong> 2025-10-15</p>
-        <p>[Optional illustration]</p>
+<h4 class="mb-3">➕ Create News</h4>
+
+<form asp-action="CreateNews" asp-controller="Administrator" method="post" class="mb-5 border p-3 rounded bg-light">
+    <div class="mb-2">
+        <input name="title" class="form-control" placeholder="Title" required />
     </div>
-</details>
+    <div class="mb-2">
+        <textarea name="content" class="form-control" placeholder="Content" required></textarea>
+    </div>
+    <div class="mb-2">
+        <input name="imageUrl" class="form-control" placeholder="Image URL" />
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="publishedAt" type="datetime-local" class="form-control" required /></div>
+        <div class="col-6">
+            <select name="isPublished" class="form-control">
+                <option value="true">Published</option>
+                <option value="false">Draft</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-2">
+        <input name="adminId" class="form-control" placeholder="Admin Id" required />
+    </div>
+    <button type="submit" class="btn btn-primary">✅ Create News</button>
+</form>
+
+<h4 class="mb-3">✏️ Edit News</h4>
+
+<form asp-action="EditNews" asp-controller="Administrator" method="post" class="mb-5 border p-3 rounded bg-light">
+    <div class="mb-2">
+        <input name="id" type="number" class="form-control" placeholder="News Id to Edit" required />
+    </div>
+    <div class="mb-2">
+        <input name="title" class="form-control" placeholder="Title" required />
+    </div>
+    <div class="mb-2">
+        <textarea name="content" class="form-control" placeholder="Content" required></textarea>
+    </div>
+    <div class="mb-2">
+        <input name="imageUrl" class="form-control" placeholder="Image URL" />
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="publishedAt" type="datetime-local" class="form-control" required /></div>
+        <div class="col-6">
+            <select name="isPublished" class="form-control">
+                <option value="true">Published</option>
+                <option value="false">Draft</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-2">
+        <input name="adminId" class="form-control" placeholder="Admin Id" required />
+    </div>
+    <button type="submit" class="btn btn-success">💾 Save Changes</button>
+</form>
+
+<h4 class="mb-3">📋 All News</h4>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Image</th>
+            <th>Published At</th>
+            <th>Is Published</th>
+            <th>Admin Id</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>@post.Id</td>
+                <td>@post.Title</td>
+                <td>@post.Content</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(post.ImageUrl))
+                    {
+                            <img src="@post.ImageUrl" alt="News image" style="max-height:40px;" />
+                    }
+                </td>
+                <td>@post.PublishedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(post.IsPublished ? "Yes" : "No")</td>
+                <td>@post.AdminId</td>
+                <td>
+                    <form asp-action="DeleteNews" asp-controller="Administrator" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@post.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

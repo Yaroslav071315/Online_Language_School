@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Online_Language_School.Models.ChatMessage>
 
-<h4>💬 Chat (Teacher)</h4>
+<h4>💬 Chat (Student)</h4>
 
 <!-- Форма для відправки повідомлення -->
-<form asp-action="SendMessage" asp-controller="Teacher" method="post" class="mb-3 border p-3 rounded bg-light">
+<form asp-action="SendMessage" asp-controller="Student" method="post" class="mb-3 border p-3 rounded bg-light">
     <div class="row g-2 mb-2">
         <div class="col-4">
             <input name="receiverId" class="form-control" placeholder="Receiver Id" required />

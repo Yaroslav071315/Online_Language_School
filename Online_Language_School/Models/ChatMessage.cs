@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -8,7 +7,7 @@ namespace Online_Language_School.Models
         public int Id { get; set; }
 
         [Required]
-        public string Message { get; set; }
+        public string Content { get; set; }
 
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
         public bool IsRead { get; set; }

@@ -9,82 +9,93 @@
         <nav class="col-2 bg-light border-end"
              style="position:fixed; top:0; left:0; height:100vh; overflow-y:auto; padding:20px;">
             <h5>Menu</h5>
-            <p><em>Note: fixed side-in panel, located on the left, will scroll independently</em></p>
             <ul class="nav flex-column nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#schedule">Schedule</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#materials">Materials</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#progress">Progress</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#payments">Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#chat">Chat</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#schedule">Schedule</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#materials">Materials</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#progress">Progress</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#payments">Payments</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#chat">Chat</a></li>
             </ul>
+            <hr />
+            <footer class="small text-center">
+                <p>📞 info@languageschool.com | +380 67 123 4567</p>
+                <p>🌐 <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">LinkedIn</a></p>
+            </footer>
         </nav>
 
         <!-- Центральна частина -->
-<main class="col-10 offset-2 p-4">
-    <h2 class="mb-4">My Office</h2>
+        <main class="col-10 offset-2 p-4">
+            <h2 class="mb-4">🎓 My Office</h2>
 
-    <!-- Навігація вкладок -->
-    <ul class="nav nav-tabs" id="officeTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule"
-                    type="button" role="tab" aria-controls="schedule" aria-selected="true">
-                Schedule
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials"
-                    type="button" role="tab" aria-controls="materials" aria-selected="false">
-                Materials
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress"
-                    type="button" role="tab" aria-controls="progress" aria-selected="false">
-                Progress
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments"
-                    type="button" role="tab" aria-controls="payments" aria-selected="false">
-                Payments
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat"
-                    type="button" role="tab" aria-controls="chat" aria-selected="false">
-                Chat
-            </button>
-        </li>
-    </ul>
+            <!-- Вкладки -->
+            <ul class="nav nav-tabs" id="studentTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button">📅 Schedule</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button">📂 Materials</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress" type="button">📊 Progress</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button">💳 Payments</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button">💬 Chat</button>
+                </li>
+            </ul>
 
-    <!-- Контент вкладок -->
-    <div class="tab-content mt-3" id="officeTabsContent">
-        <div class="tab-pane fade show active" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
-                    @Html.Partial("_Schedule")
-        </div>
-        <div class="tab-pane fade" id="materials" role="tabpanel" aria-labelledby="materials-tab">
-                    @Html.Partial("_Materials")
-        </div>
-        <div class="tab-pane fade" id="progress" role="tabpanel" aria-labelledby="progress-tab">
-                    @Html.Partial("_Progress")
-        </div>
-        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
-                    @Html.Partial("_Payments")
-        </div>
-        <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
-                    @Html.Partial("_Chat")
-        </div>
+            <!-- Контент вкладок -->
+            <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="schedule" role="tabpanel">
+                    <div id="scheduleContent">Loading...</div>
+                </div>
+                <div class="tab-pane fade" id="materials" role="tabpanel">
+                    <div id="materialsContent">Loading...</div>
+                </div>
+                <div class="tab-pane fade" id="progress" role="tabpanel">
+                    <div id="progressContent">Loading...</div>
+                </div>
+                <div class="tab-pane fade" id="payments" role="tabpanel">
+                    <div id="paymentsContent">Loading...</div>
+                </div>
+                <div class="tab-pane fade" id="chat" role="tabpanel">
+                    <div id="chatContent">Loading...</div>
+                </div>
+            </div>
+        </main>
     </div>
-</main>
+</div>
 
-<!-- ⚠️ Футер тут більше не потрібен, бо він уже є у Layout -->
+@section Scripts {
+        <script>
+            function loadTabContent(tabId, url) {
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById(tabId).innerHTML = html;
+                    });
+            }
+
+            // Завантажуємо Schedule при старті
+            loadTabContent("scheduleContent", "/Student/ScheduleAll");
+
+            // Підвантаження при кліку на вкладки
+            document.getElementById("schedule-tab").addEventListener("click", () => {
+                loadTabContent("scheduleContent", "/Student/ScheduleAll");
+            });
+            document.getElementById("materials-tab").addEventListener("click", () => {
+                loadTabContent("materialsContent", "/Student/Materials");
+            });
+            document.getElementById("progress-tab").addEventListener("click", () => {
+                loadTabContent("progressContent", "/Student/Progress");
+            });
+            document.getElementById("payments-tab").addEventListener("click", () => {
+                loadTabContent("paymentsContent", "/Student/Payments");
+            });
+            document.getElementById("chat-tab").addEventListener("click", () => {
+                loadTabContent("chatContent", "/Student/Chat");
+            });
+        </script>
+}

@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Online_Language_School.Models.ChatMessage>
 
-<h4>💬 Chat (Teacher)</h4>
+<h4>Chat (Admin)</h4>
 
 <!-- Форма для відправки повідомлення -->
-<form asp-action="SendMessage" asp-controller="Teacher" method="post" class="mb-3 border p-3 rounded bg-light">
+<form asp-action="SendMessage" asp-controller="Administrator" method="post" class="mb-3 border p-3 rounded bg-light">
     <div class="row g-2 mb-2">
         <div class="col-4">
             <input name="receiverId" class="form-control" placeholder="Receiver Id" required />
@@ -30,12 +30,12 @@
     <tbody>
         @foreach (var msg in Model)
         {
-                <tr>
-                    <td>@msg.Sender?.FirstName @msg.Sender?.LastName (@msg.SenderId)</td>
-                    <td>@msg.Receiver?.FirstName @msg.Receiver?.LastName (@msg.ReceiverId)</td>
-                    <td>@msg.Content</td>
-                    <td>@msg.SentAt.ToString("yyyy-MM-dd HH:mm")</td>
-                </tr>
+            <tr>
+                <td>@msg.Sender?.FirstName @msg.Sender?.LastName (@msg.SenderId)</td>
+                <td>@msg.Receiver?.FirstName @msg.Receiver?.LastName (@msg.ReceiverId)</td>
+                <td>@msg.Content</td>
+                <td>@msg.SentAt.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
         }
     </tbody>
 </table>

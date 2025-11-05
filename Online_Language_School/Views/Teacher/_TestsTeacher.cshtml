@@ -1,0 +1,155 @@
+﻿@model IEnumerable<Online_Language_School.Models.Test>
+
+<h4 class="mb-3">📝 Tests Management</h4>
+
+<!-- Форма створення тесту -->
+<form asp-action="CreateTest" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="row g-2 mb-2">
+        <div class="col-6">
+            <input name="title" class="form-control" placeholder="Test Title" required />
+        </div>
+        <div class="col-6">
+            <input name="passingScore" type="number" class="form-control" placeholder="Passing Score" />
+        </div>
+    </div>
+    <div class="mb-2">
+        <textarea name="description" class="form-control" placeholder="Description"></textarea>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6">
+            <input name="timeLimit" type="number" class="form-control" placeholder="Time Limit (minutes)" />
+        </div>
+        <div class="col-6">
+            <!-- Вибір уроку -->
+            <select name="lessonId" class="form-select" required>
+                <option value="">-- Select Lesson --</option>
+                @if (ViewBag.Lessons != null)
+                {
+                    foreach (var lesson in ViewBag.Lessons)
+                    {
+                                <option value="@lesson.Id">@lesson.Title (@lesson.ScheduledDate?.ToString("yyyy-MM-dd"))</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">✅ Add Test</button>
+</form>
+
+<h4 class="mb-3">✏️ Edit Test</h4>
+<form asp-action="EditTest" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="mb-2">
+        <!-- Вибір тесту для редагування -->
+        <select name="id" class="form-select" required>
+            <option value="">-- Select Test --</option>
+            @if (Model != null)
+            {
+                foreach (var test in Model)
+                {
+                            <option value="@test.Id">
+                        @test.Title (@test.Lesson?.Title, Id: @test.Id)
+                            </option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="title" class="form-control" placeholder="New Title" required /></div>
+        <div class="col-6"><input name="passingScore" type="number" class="form-control" placeholder="Passing Score" /></div>
+    </div>
+    <div class="mb-2">
+        <textarea name="description" class="form-control" placeholder="New Description"></textarea>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="timeLimit" type="number" class="form-control" placeholder="Time Limit (minutes)" /></div>
+        <div class="col-6">
+            <!-- Вибір уроку -->
+            <select name="lessonId" class="form-select" required>
+                <option value="">-- Select Lesson --</option>
+                @if (ViewBag.Lessons != null)
+                {
+                    foreach (var lesson in ViewBag.Lessons)
+                    {
+                                <option value="@lesson.Id">@lesson.Title (@lesson.ScheduledDate?.ToString("yyyy-MM-dd"))</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <div class="mb-2">
+        <label class="form-check-label">
+            <input type="checkbox" name="isActive" value="true" class="form-check-input" /> Active
+        </label>
+    </div>
+    <button type="submit" class="btn btn-warning">💾 Save Changes</button>
+</form>
+
+<!-- Таблиця тестів -->
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Lesson</th>
+            <th>Time Limit</th>
+            <th>Passing Score</th>
+            <th>Active</th>
+            <th>Questions</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var test in Model)
+            {
+                        <tr>
+                            <td>@test.Id</td>
+                            <td>@test.Title</td>
+                            <td>@test.Description</td>
+                            <td>@test.Lesson?.Title (@test.LessonId)</td>
+                            <td>@test.TimeLimit min</td>
+                            <td>@test.PassingScore</td>
+                            <td>@(test.IsActive ? "✅" : "❌")</td>
+                            <td>
+                                <details>
+                                    <summary>@test.Questions?.Count() questions</summary>
+                                    <ul>
+                                @foreach (var q in test.Questions ?? new List<Online_Language_School.Models.Question>())
+                                {
+                                                <li>
+                                                    <strong>@q.QuestionText</strong> (@q.Points pts)
+                                                    <ul>
+                                            @foreach (var a in q.Answers ?? new List<Online_Language_School.Models.Answer>())
+                                            {
+                                                                <li>@a.AnswerText @(a.IsCorrect ? "✔️" : "")</li>
+                                            }
+                                                    </ul>
+                                                </li>
+                                }
+                                    </ul>
+                                </details>
+                            </td>
+                            <td>
+                                <form asp-action="DeleteTest" asp-controller="Teacher" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@test.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                                </form>
+                                <form asp-action="EditTest" asp-controller="Teacher" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@test.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">✏️ Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+            }
+        }
+        else
+        {
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No tests created</td>
+                </tr>
+        }
+    </tbody>
+</table>

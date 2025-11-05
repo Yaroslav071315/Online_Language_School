@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Online_Language_School.Models.Enrollment>
+
+<h4 class="mb-3">➕ Create Enrollment</h4>
+
+<form asp-action="CreateEnrollment" asp-controller="Administrator" method="post" class="mb-5 border p-3 rounded bg-light">
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="studentId" class="form-control" placeholder="Student Id" required /></div>
+        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="Course Id" required /></div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="status" class="form-control" placeholder="Status (Pending/Active/...)" required /></div>
+        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="Paid Amount" /></div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="startDate" type="date" class="form-control" /></div>
+        <div class="col-6"><input name="endDate" type="date" class="form-control" /></div>
+    </div>
+    <button type="submit" class="btn btn-primary">✅ Create Enrollment</button>
+</form>
+
+<h4 class="mb-3">✏️ Edit Enrollment</h4>
+
+<form asp-action="EditEnrollment" asp-controller="Administrator" method="post" class="mb-5 border p-3 rounded bg-light">
+    <div class="mb-2">
+        <input name="id" type="number" class="form-control" placeholder="Enrollment Id to Edit" required />
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="studentId" class="form-control" placeholder="Student Id" required /></div>
+        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="Course Id" required /></div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="status" class="form-control" placeholder="Status" required /></div>
+        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="Paid Amount" /></div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="startDate" type="date" class="form-control" /></div>
+        <div class="col-6"><input name="endDate" type="date" class="form-control" /></div>
+    </div>
+    <button type="submit" class="btn btn-success">💾 Save Changes</button>
+</form>
+
+<h4 class="mb-3">📋 All Enrollments</h4>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Paid Amount</th>
+            <th>Enrollment Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.Id</td>
+                <td>@e.Student?.FirstName @e.Student?.LastName (@e.StudentId)</td>
+                <td>@e.Course?.Title (@e.CourseId)</td>
+                <td>@e.Status</td>
+                <td>@e.PaidAmount</td>
+                <td>@e.EnrollmentDate.ToString("yyyy-MM-dd")</td>
+                <td>@(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                <td>@(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                <td>
+                    <form asp-action="DeleteEnrollment" asp-controller="Administrator" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@e.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

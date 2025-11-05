@@ -3,10 +3,8 @@
 <h4>📂 My Course Materials</h4>
 
 @if (Model != null && Model.Any())
-
 {
     @foreach (var group in Model.GroupBy(m => m.Lesson.Course.Title))
-
     {
                 <details class="mb-3">
                     <summary>@group.Key</summary>
@@ -24,7 +22,6 @@
                         </thead>
                         <tbody>
                     @foreach (var material in group)
-
                     {
                                 <tr>
                                     <td>@material.Title</td>
@@ -48,9 +45,7 @@
                 </details>
     }
 }
-
 else
-
 {
         <p class="text-muted">No materials available.</p>
 }

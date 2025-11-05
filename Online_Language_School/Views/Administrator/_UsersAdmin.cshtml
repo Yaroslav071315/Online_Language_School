@@ -1,12 +1,33 @@
-﻿<h4>Users Management</h4>
-<details class="mb-3">
-    <summary>Teachers</summary>
-    <div class="border p-3 mb-2">Information about teacher</div>
-    <button class="btn btn-sm btn-danger">Ban/Unban</button>
-</details>
+﻿@model IEnumerable<Online_Language_School.Models.ApplicationUser>
 
-<details>
-    <summary>Students</summary>
-    <div class="border p-3 mb-2">Information about student</div>
-    <button class="btn btn-sm btn-danger">Ban/Unban</button>
-</details>
+<h4>Users Management</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FirstName @user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.UserType</td>
+                <td>@(user.IsActive ? "Yes" : "No")</td>
+                <td>
+                    <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post">
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")">
+                            @(user.IsActive ? "Ban" : "Unban")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

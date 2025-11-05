@@ -1,35 +1,150 @@
-﻿<h4>Materials Management</h4>
-<div class="mb-3">
-    <button class="btn btn-primary btn-sm">Create material</button>
-    <button class="btn btn-warning btn-sm">Alter material</button>
-    <button class="btn btn-danger btn-sm">Delete material</button>
-    <button class="btn btn-primary btn-sm">Create control point</button>
-    <button class="btn btn-warning btn-sm">Alter control point</button>
-    <button class="btn btn-danger btn-sm">Delete control point</button>
-    <button class="btn btn-primary btn-sm">Make a class</button>
-    <button class="btn btn-danger btn-sm">Delete a class</button>
-</div>
+﻿@model IEnumerable<Online_Language_School.Models.LessonMaterial>
 
-<details class="mb-3">
-    <summary>English B2</summary>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Filename</th>
-                <th>Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Lesson1.pdf</td>
-                <td>PDF</td>
-                <td>
-                    <button class="btn btn-sm btn-primary">View</button>
-                    <button class="btn btn-sm btn-success">Download</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <p><strong>Theme of class:</strong> Introduction to Speaking</p>
-</details>
+<h4 class="mb-3">📂 Materials Management</h4>
+
+<!-- Форма створення матеріалу -->
+<form asp-action="CreateMaterial" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="row g-2 mb-2">
+        <div class="col-6">
+            <input name="title" class="form-control" placeholder="Material Title" required />
+        </div>
+        <div class="col-6">
+            <input name="fileUrl" class="form-control" placeholder="File URL" required />
+        </div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-4">
+            <select name="fileType" class="form-select" required>
+                <option value="">-- Select Type --</option>
+                <option>PDF</option>
+                <option>Video</option>
+                <option>Document</option>
+            </select>
+        </div>
+        <div class="col-4">
+            <input name="fileSize" type="number" class="form-control" placeholder="File Size (bytes)" />
+        </div>
+        <div class="col-4">
+            <input name="expiryDate" type="date" class="form-control" />
+        </div>
+    </div>
+    <div class="mb-2">
+        <!-- Випадаючий список уроків -->
+        <select name="lessonId" class="form-select" required>
+            <option value="">-- Select Lesson --</option>
+            @if (ViewBag.Lessons != null)
+            {
+                foreach (var lesson in ViewBag.Lessons)
+                {
+                            <option value="@lesson.Id">@lesson.Title (@lesson.ScheduledDate?.ToString("yyyy-MM-dd"))</option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">✅ Add Material</button>
+</form>
+
+<h4 class="mb-3">✏️ Edit Material</h4>
+<form asp-action="EditMaterial" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="mb-2">
+        <!-- Вибір матеріалу для редагування -->
+        <select name="id" class="form-select" required>
+            <option value="">-- Select Material --</option>
+            @if (Model != null)
+            {
+                foreach (var material in Model)
+                {
+                            <option value="@material.Id">
+                        @material.Title (@material.FileType, Lesson: @material.Lesson?.Title)
+                            </option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="title" class="form-control" placeholder="New Title" required /></div>
+        <div class="col-6"><input name="fileUrl" class="form-control" placeholder="New File URL" required /></div>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-4">
+            <select name="fileType" class="form-select" required>
+                <option value="">-- Select Type --</option>
+                <option>PDF</option>
+                <option>Video</option>
+                <option>Document</option>
+            </select>
+        </div>
+        <div class="col-4">
+            <input name="fileSize" type="number" class="form-control" placeholder="File Size (bytes)" />
+        </div>
+        <div class="col-4">
+            <input name="expiryDate" type="date" class="form-control" />
+        </div>
+    </div>
+    <div class="mb-2">
+        <!-- Вибір уроку для матеріалу -->
+        <select name="lessonId" class="form-select" required>
+            <option value="">-- Select Lesson --</option>
+            @if (ViewBag.Lessons != null)
+            {
+                foreach (var lesson in ViewBag.Lessons)
+                {
+                            <option value="@lesson.Id">@lesson.Title (@lesson.ScheduledDate?.ToString("yyyy-MM-dd"))</option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-warning">💾 Save Changes</button>
+</form>
+
+<!-- Таблиця матеріалів -->
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Lesson</th>
+            <th>File URL</th>
+            <th>Size</th>
+            <th>Uploaded</th>
+            <th>Expiry</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var material in Model)
+            {
+                        <tr>
+                            <td>@material.Id</td>
+                            <td>@material.Title</td>
+                            <td>@material.FileType</td>
+                            <td>@material.Lesson?.Title (@material.LessonId)</td>
+                            <td><a href="@material.FileUrl" target="_blank">Open</a></td>
+                            <td>@material.FileSize</td>
+                            <td>@material.UploadedAt.ToShortDateString()</td>
+                            <td>@(material.ExpiryDate?.ToShortDateString() ?? "-")</td>
+                            <td>
+                                <form asp-action="DeleteMaterial" asp-controller="Teacher" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@material.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                                </form>
+                                <form asp-action="EditMaterial" asp-controller="Teacher" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@material.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">✏️ Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+            }
+        }
+        else
+        {
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No materials uploaded</td>
+                </tr>
+        }
+    </tbody>
+</table>

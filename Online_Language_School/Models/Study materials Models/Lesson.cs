@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -22,7 +19,7 @@ namespace Online_Language_School.Models
 
         // Navigation
         public virtual Course Course { get; set; }
-        public virtual ICollection<LessonMaterial> Materials { get; set; }
+        public virtual ICollection<LessonMaterial> LessonMaterials { get; set; }
         public virtual ICollection<Test> Tests { get; set; }
     }
 }

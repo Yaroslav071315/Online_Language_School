@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -16,18 +15,20 @@ namespace Online_Language_School.Models
         [Required]
         public string Status { get; set; } // Pending, Success, Failed, Refunded
 
-        public string TransactionId { get; set; }
-        public string PaymentMethod { get; set; }
+        public string? TransactionId { get; set; }
+        public string? PaymentMethod { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? CompletedAt { get; set; }
 
         // Foreign Keys
         [Required]
         public string UserId { get; set; }
-        public int EnrollmentId { get; set; }
+
+        [Required]
+        public int CourseId { get; set; }
 
         // Navigation
         public virtual ApplicationUser User { get; set; }
-        public virtual Enrollment Enrollment { get; set; }
+        public virtual Course Course { get; set; }
     }
 }

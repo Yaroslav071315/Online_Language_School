@@ -1,10 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Online_Language_School.Data;
 using Online_Language_School.Models;
+using System;
+using System.Linq;
 
 namespace Online_Language_School.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public AccountController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
@@ -16,14 +26,33 @@ namespace Online_Language_School.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            // TODO: логіка перевірки користувача через Identity
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ViewBag.Error = "Please enter both email and password.";
                 return View();
             }
 
-            return RedirectToAction("Index", "Home");
+            // Перевірка користувача в БД
+            var user = _context.Users
+                .FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
+
+            if (user == null)
+            {
+                ViewBag.Error = "Invalid email or password.";
+                return View();
+            }
+
+            // після перевірки користувача
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserRole", user.UserType.ToString());
+
+            return user.UserType switch
+            {
+                UserType.Student => RedirectToAction("Office", "Student"),
+                UserType.Teacher => RedirectToAction("Office", "Teacher"),
+                UserType.Administrator => RedirectToAction("Office", "Administrator"),
+                _ => RedirectToAction("Index", "Home")
+            };
         }
 
         // GET: /Account/Register
@@ -35,7 +64,7 @@ namespace Online_Language_School.Controllers
 
         // POST: /Account/Register
         [HttpPost]
-        public IActionResult Register(string name, string email, string password, string repeatPassword, string role)
+        public IActionResult Register(string firstName, string lastName, string email, string password, string repeatPassword, string role)
         {
             if (password != repeatPassword)
             {
@@ -43,8 +72,37 @@ namespace Online_Language_School.Controllers
                 return View();
             }
 
-            // TODO: створення користувача через UserManager
-            // var user = new ApplicationUser { UserName = name, Email = email, UserType = ... };
+            if (_context.Users.Any(u => u.Email == email))
+            {
+                ViewBag.Error = "User with this email already exists.";
+                return View();
+            }
+
+            // Визначаємо роль
+            UserType userType = role switch
+            {
+                "Student" => UserType.Student,
+                "Teacher" => UserType.Teacher,
+                "Administrator" => UserType.Administrator,
+                _ => UserType.Student
+            };
+
+            // Створюємо користувача
+            var user = new ApplicationUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                UserName = email,
+                PasswordHash = password, // ⚠️ у реальному проєкті треба хешувати!
+                RegistrationDate = DateTime.UtcNow,
+                IsActive = true,
+                UserType = userType
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
 
             return RedirectToAction("Login", "Account");
         }

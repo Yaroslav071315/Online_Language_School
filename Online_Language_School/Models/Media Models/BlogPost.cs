@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -17,11 +16,11 @@ namespace Online_Language_School.Models
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
         public bool IsPublished { get; set; } = true;
 
-        // Foreign Key
+        // Foreign Key 
         [Required]
-        public string AuthorId { get; set; }
+        public string AdminId { get; set; }
 
-        // Navigation
-        public virtual ApplicationUser Author { get; set; }
+        // Navigation 
+        public virtual ApplicationUser Admin { get; set; }
     }
 }

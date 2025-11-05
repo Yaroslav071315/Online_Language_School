@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Online_Language_School.Models.Test>
+
+<h4>📊 Progress (All Tests)</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Theme</th>
+            <th>Lesson</th>
+            <th>Course</th>
+            <th>Type</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var test in Model)
+        {
+            <tr>
+                <td>@test.Title</td>
+                <td>@test.Lesson?.Title</td>
+                <td>@test.Lesson?.Course?.Title</td>
+                <td>Test</td>
+                <td>
+                    <a class="btn btn-sm btn-warning"
+                       href="@Url.Action("PassTest", "Student", new { id = test.Id })">
+                        Pass
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

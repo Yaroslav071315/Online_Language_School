@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Online_Language_School.Models.Payment>
+
+<h4>💳 Payments</h4>
+<p>Total payments loaded: @ViewBag.Count</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date & Time</th>
+            <th>Course</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var payment in Model)
+            {
+                    <tr>
+                        <td>@payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@payment.Course?.Title</td>
+                        <td>@payment.Amount @payment.Currency</td>
+                        <td>
+                        @if (payment.Status == "Pending")
+                        {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (payment.Status == "Completed")
+                        {
+                                    <span class="badge bg-success">Completed</span>
+                        }
+                        else
+                        {
+                                    <span class="badge bg-secondary">@payment.Status</span>
+                        }
+                        </td>
+                        <td>
+                        @if (payment.Status == "Pending")
+                        {
+                                    <button class="btn btn-sm btn-info">Upload receipt</button>
+                        }
+                        else
+                        {
+                                    <span class="text-muted">-</span>
+                        }
+                        </td>
+                    </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">No payments found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

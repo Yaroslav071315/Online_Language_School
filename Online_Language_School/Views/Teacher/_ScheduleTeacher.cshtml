@@ -1,24 +1,140 @@
-﻿<h4>List of classes</h4>
-<table class="table table-striped">
-    <thead>
+﻿@model IEnumerable<Online_Language_School.Models.Lesson>
+
+<h4 class="mb-3">📚 List of Classes</h4>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
         <tr>
             <th>Date & Time</th>
             <th>Course</th>
-            <th>Theme</th>
-            <th>Group</th>
-            <th>Status</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Duration</th>
+            <th>Order</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>2025-10-20 18:00</td>
-            <td>English B2</td>
-            <td>Speaking practice</td>
-            <td>Group A</td>
-            <td>Planned</td>
-        </tr>
+        @foreach (var lesson in Model)
+        {
+                <tr>
+                    <td>@(lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                    <td>@lesson.Course?.Title (@lesson.CourseId)</td>
+                    <td>@lesson.Title</td>
+                    <td>@lesson.Description</td>
+                    <td>@lesson.DurationMinutes min</td>
+                    <td>@lesson.OrderNumber</td>
+                    <td>
+                        <form asp-action="DeleteLesson" asp-controller="Teacher" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@lesson.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                        </form>
+
+                        <form asp-action="EditLesson" asp-controller="Teacher" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@lesson.Id" />
+                            <button type="submit" class="btn btn-sm btn-warning">✏️ Edit</button>
+                        </form>
+                    </td>
+                </tr>
+        }
     </tbody>
 </table>
-<button class="btn btn-success mb-3">Set a class in schedule</button>
 
-<div class="border p-3 text-center">[Calendar placeholder]</div>
+<h4 class="mb-3">➕ Add Lesson</h4>
+<form asp-action="CreateLesson" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="title" class="form-control" placeholder="Lesson Title" required /></div>
+        <div class="col-6"><input name="orderNumber" type="number" class="form-control" placeholder="Order Number" /></div>
+    </div>
+    <div class="mb-2">
+        <textarea name="description" class="form-control" placeholder="Description"></textarea>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="scheduledDate" type="datetime-local" class="form-control" /></div>
+        <div class="col-6"><input name="durationMinutes" type="number" class="form-control" placeholder="Duration (min)" /></div>
+    </div>
+    <div class="mb-2">
+        <input name="courseId" type="number" class="form-control" placeholder="Course Id" required />
+    </div>
+    <button type="submit" class="btn btn-success">✅ Save Lesson</button>
+</form>
+
+<h4 class="mb-3">✏️ Edit Lesson</h4>
+<form asp-action="EditLesson" asp-controller="Teacher" method="post" class="border p-3 rounded bg-light mb-4">
+    <div class="mb-2">
+        <!-- Вибір уроку для редагування -->
+        <select name="id" class="form-select" required>
+            <option value="">-- Select Lesson --</option>
+            @foreach (var lesson in ViewBag.Lessons as List<Online_Language_School.Models.Lesson>)
+            {
+                    <option value="@lesson.Id">
+                    @lesson.Title (@lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm"))
+                    </option>
+            }
+        </select>
+    </div>
+
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="title" class="form-control" placeholder="Lesson Title" required /></div>
+        <div class="col-6"><input name="orderNumber" type="number" class="form-control" placeholder="Order Number" /></div>
+    </div>
+    <div class="mb-2">
+        <textarea name="description" class="form-control" placeholder="Description"></textarea>
+    </div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><input name="scheduledDate" type="datetime-local" class="form-control" /></div>
+        <div class="col-6"><input name="durationMinutes" type="number" class="form-control" placeholder="Duration (min)" /></div>
+    </div>
+    <div class="mb-2">
+        <input name="courseId" type="number" class="form-control" placeholder="Course Id" required />
+    </div>
+    <button type="submit" class="btn btn-warning">💾 Save Changes</button>
+</form>
+
+<h4 class="mb-3">📅 Calendar</h4>
+<div class="border p-3 text-center">
+    <table class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                var currentDay = 1;
+                var firstDayOfWeek = (int)startOfMonth.DayOfWeek;
+                if (firstDayOfWeek == 0) firstDayOfWeek = 7; // неділя = 7
+                for (int row = 0; row < 6; row++)
+                {
+                            <tr>
+                        @for (int col = 1; col <= 7; col++)
+                        {
+                            if ((row == 0 && col < firstDayOfWeek) || currentDay > daysInMonth)
+                            {
+                                                <td></td>
+                            }
+                            else
+                            {
+                                var date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, currentDay);
+                                var hasLesson = Model.Any(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value.Date == date.Date);
+                                                <td class="@(hasLesson ? "bg-success text-white" : "")">
+                                    @currentDay
+                                                </td>
+                                ;
+                                currentDay++;
+                            }
+                        }
+                            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
