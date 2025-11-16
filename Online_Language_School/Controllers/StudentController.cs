@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Language_School.Data;
 using Online_Language_School.Models;
+using Online_Language_School.ViewModels;
 
 namespace Online_Language_School.Controllers
 {
@@ -229,6 +230,39 @@ namespace Online_Language_School.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Office");
+        }
+
+        [HttpGet]
+        public IActionResult Courses(string level, string language, decimal? price, string format, int? maxStudents)
+        {
+            var query = _context.Courses.AsQueryable();
+
+            if (!string.IsNullOrEmpty(level))
+                query = query.Where(c => c.Level == level);
+
+            if (!string.IsNullOrEmpty(language))
+                query = query.Where(c => c.Language == language);
+
+            if (!string.IsNullOrEmpty(format))
+                query = query.Where(c => c.Format == format);
+
+            if (price.HasValue)
+                query = query.Where(c => c.Price <= price.Value);
+
+            if (maxStudents.HasValue)
+                query = query.Where(c => c.MaxStudents <= maxStudents.Value);
+
+            var model = new CourseSearchViewModel
+            {
+                Level = level,
+                Language = language,
+                Price = price,
+                Format = format,
+                MaxStudents = maxStudents,
+                Courses = query.ToList()
+            };
+
+            return PartialView("_CoursesPartial", model);
         }
     }
 }

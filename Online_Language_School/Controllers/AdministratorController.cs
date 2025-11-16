@@ -338,6 +338,8 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
+
+        [HttpGet]
         public IActionResult Chat()
         {
             var adminId = HttpContext.Session.GetString("UserId");
@@ -354,8 +356,12 @@ namespace Online_Language_School.Controllers
                 .OrderByDescending(m => m.SentAt)
                 .ToList();
 
+
+
             return View(messages);
         }
+
+
 
         [HttpPost]
         public IActionResult SendMessage(string receiverId, string content)
