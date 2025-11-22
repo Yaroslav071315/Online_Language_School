@@ -4,6 +4,7 @@ namespace Online_Language_School.Models
 {
     public class Answer
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]

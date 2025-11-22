@@ -4,6 +4,7 @@ namespace Online_Language_School.Models
 {
     public class TestResult
     {
+        [Key]
         public int Id { get; set; }
         public DateTime CompletedAt { get; set; } = DateTime.UtcNow;
         public int Score { get; set; }
