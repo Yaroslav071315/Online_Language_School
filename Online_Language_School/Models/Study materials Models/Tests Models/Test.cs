@@ -4,6 +4,7 @@ namespace Online_Language_School.Models
 {
     public class Test
     {
+        [Key]
         public int Id { get; set; }
 
         [Required, MaxLength(200)]

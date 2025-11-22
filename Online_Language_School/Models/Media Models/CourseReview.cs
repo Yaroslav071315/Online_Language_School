@@ -4,6 +4,7 @@ namespace Online_Language_School.Models
 {
     public class CourseReview
     {
+        [Key]
         public int Id { get; set; }
 
         [Required, Range(1, 5)]

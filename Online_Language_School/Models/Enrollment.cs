@@ -4,6 +4,7 @@ namespace Online_Language_School.Models
 {
     public class Enrollment
     {
+        [Key]
         public int Id { get; set; }
         public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
         public DateTime? StartDate { get; set; }
