@@ -1,8 +1,22 @@
 ﻿<section id="about">
     <details>
         <summary>🏫 About Our School</summary>
-        <p>We provide high-quality online language education with flexible schedules and interactive lessons.</p>
-        <img src="https://via.placeholder.com/600x200" alt="School illustration" style="width:100%; border-radius:8px; margin-top:10px;" />
-        <a class="btn btn-success" href="@Url.Action("Details", "Courses", new { id = 1 })">Enroll on a course</a>
+        <div class="details-content about-us">
+            <div class="text">
+                <p>We provide high-quality online language education that offers:</p>
+                <ul>
+                    <li>Flexible schedules tailored to your lifestyle</li>
+                    <li>Interactive lessons that keep you engaged</li>
+                    <li>Programs for exam preparation, career advancement, or cultural exploration</li>
+                    <li>Experienced instructors who provide personalized guidance</li>
+                    <li>A vibrant online community that makes learning enjoyable and accessible</li>
+                </ul>
+            </div>
+            <div class="image-wrapper">
+                <img class="school-img" src="~/Images/school.jpg" alt="School illustration - Photo by MChe Lee on Unsplash" />
+                <p class="credits">Photo by <a href="https://unsplash.com/@@mclee" target="_blank" rel="nofollow">MChe Lee</a> on <a href="https://unsplash.com" target="_blank" rel="nofollow">Unsplash</a></p>
+            </div>
+            <!--<a class="btn btn-success" href="@Url.Action("Details", "Courses", new { id = 1 })">Enroll on a course</a>-->
+        </div>
     </details>
 </section>
