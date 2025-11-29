@@ -13,27 +13,27 @@
                 <form asp-action="Register" method="post">
                     <div class="mb-3">
                         <label for="FirstName" class="form-label">First Name</label>
-                        <input name="FirstName" type="text" class="form-control" required />
+                        <input id="FirstName" name="FirstName" type="text" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="LastName" class="form-label">Last Name</label>
-                        <input name="LastName" type="text" class="form-control" required />
+                        <input id="LastName" name="LastName" type="text" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="Email" class="form-label">Email</label>
-                        <input name="Email" type="email" class="form-control" required />
+                        <input id="Email" name="Email" type="email" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="Password" class="form-label">Password</label>
-                        <input name="Password" type="password" class="form-control" required />
+                        <input id="Password" name="Password" type="password" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="RepeatPassword" class="form-label">Repeat Password</label>
-                        <input name="RepeatPassword" type="password" class="form-control" required />
+                        <input id="RepeatPassword" name="RepeatPassword" type="password" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="Role" class="form-label">Choose role</label>
-                        <select name="Role" class="form-select" required>
+                        <select id="Role" name="Role" class="form-select" required>
                             <option value="">-- Select role --</option>
                             <option value="Student">Student</option>
                             <option value="Teacher">Teacher</option>
@@ -43,10 +43,15 @@
                     <button type="submit" class="btn btn-primary w-100">Create account</button>
                 </form>
 
-                @if (ViewBag.Error != null)
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    @Html.ValidationSummary(false, "", new { @class = "alert alert-danger mt-2" })
+                }
+
+                @* @if (ViewBag.Error != null)
                 {
                         <div class="alert alert-danger mt-2">@ViewBag.Error</div>
-                }
+                } *@
 
                 <div class="text-center mt-3">
                     Already have an account? <a href="@Url.Action("Login","Account")">Log in</a>

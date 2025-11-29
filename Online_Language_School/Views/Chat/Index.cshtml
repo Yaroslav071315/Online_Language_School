@@ -1,0 +1,21 @@
+﻿@model List<Online_Language_School.ViewModels.Chat.ChatListItemViewModel>
+@{
+    Layout = null;
+}
+
+<form id="chatSearchForm" asp-action="Search" method="get">
+    <div class="input-group mb-3">
+        <input name="query" placeholder="Type name or @@ID"
+               class="form-control" />
+        <button class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@foreach (var chat in Model)
+{
+        <a href="/Chat/Conversation/@chat.UserId" class="d-block border p-2 mb-2 text-decoration-none" data-chat>
+            <strong>@chat.FullName</strong>
+            <div>@chat.LastMessage</div>
+            <small>@chat.LastMessageTime</small>
+        </a>
+}

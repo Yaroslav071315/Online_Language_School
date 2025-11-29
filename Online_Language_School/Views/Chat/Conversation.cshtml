@@ -1,0 +1,31 @@
+﻿@model List<Online_Language_School.ViewModels.Chat.ChatMessageViewModel>
+@{
+    var user = ViewBag.User;
+    Layout = null;
+}
+
+<a href="/Chat/Index" class="btn btn-secondary mb-3" data-chat>⬅ Back</a>
+
+<h4>Chat with @user.FirstName @user.LastName</h4>
+
+
+<form id="sendMessageForm" asp-action="Send" method="post">
+    <input type="hidden" name="receiverId" value="@user.Id" />
+    <div class="input-group mb-3">
+        <input name="text" class="form-control" placeholder="Type a message..." />
+        <button class="btn btn-success" type="submit">Send</button>
+    </div>
+</form>
+
+
+<div style="min-height:300px" class="border p-3 mb-3">
+    @foreach (var msg in Model)
+    {
+            <div style="text-align:@(msg.IsMine ? "right" : "left")">
+                <b>@msg.Content</b>
+                <div><small>@msg.SentAt</small></div>
+            </div>
+            <hr />
+    }
+</div>
+

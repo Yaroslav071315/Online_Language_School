@@ -102,11 +102,43 @@
                 loadTabContent("paymentsContent", "/Student/Payments");
             });
             document.getElementById("chat-tab").addEventListener("click", () => {
-                loadTabContent("chatContent", "/Student/Chat");
+                //loadTabContent("chatContent", "/Student/Chat");
+                loadTabContent("chatContent", "/Chat/Index");
             });
             document.getElementById("courses-tab").addEventListener("click", () => {
                 loadTabContent("coursesContent", "/Student/Courses");
             });
+
+            document.addEventListener("click", function(e) {
+                const link = e.target.closest("a[data-chat]");
+                if (link) {
+                    e.preventDefault();
+                    const url = link.getAttribute("href");
+                    loadTabContent("chatContent", url);
+                }
+            });
+            document.addEventListener("submit", function(e) {
+                const form = e.target;
+                if (form.id === "chatSearchForm") {
+                    e.preventDefault();
+                    const url = form.action + "?" + new URLSearchParams(new FormData(form));
+                    loadTabContent("chatContent", url);
+                }
+                if (form.id === "sendMessageForm") {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById("chatContent").innerHTML = html;
+                    });
+                }
+            });
+
+
 
         </script>
 }

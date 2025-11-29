@@ -12,12 +12,12 @@
              style="position:fixed; top:0; left:0; height:100vh; overflow-y:auto; padding:20px;">
             <h5>Menu</h5>
             <ul class="nav flex-column nav-pills">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users">Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses">Courses</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news">News</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments">Payments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments">Enrollments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat">Chat</button></li>
+                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#users">Users</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#courses">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#news">News</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#payments">Payments</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#enrollments">Enrollments</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#chat">Chat</a></li>
             </ul>
             <hr />
             <footer class="small text-center">
@@ -28,39 +28,114 @@
 
         <!-- Центральна частина -->
         <main class="col-10 offset-2 p-4">
-            <h2 class="mb-4">Administrator Office</h2>
+            <h2 class="mb-4">⚙️ Administrator Office</h2>
 
             <!-- Вкладки -->
             <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users" type="button">Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses" type="button">Courses</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news" type="button">News</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments" type="button">Payments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments" type="button">Enrollments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat" type="button">Chat</button></li>
+                <li class="nav-item">
+                    <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button">👥 Users</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button">📚 Courses</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="news-tab" data-bs-toggle="tab" data-bs-target="#news" type="button">📰 News</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button">💳 Payments</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="enrollments-tab" data-bs-toggle="tab" data-bs-target="#enrollments" type="button">📝 Enrollments</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button">💬 Chat</button>
+                </li>
             </ul>
 
             <!-- Контент вкладок -->
             <div class="tab-content mt-3">
-                <div class="tab-pane fade show active" id="users">
-                    @Html.Partial("_UsersAdmin", Model.Users)
+                <div class="tab-pane fade show active" id="users" role="tabpanel">
+                    <div id="usersContent">Loading...</div>
                 </div>
-                <div class="tab-pane fade" id="courses">
-                    @Html.Partial("_CoursesAdmin", Model.Courses)
+                <div class="tab-pane fade" id="courses" role="tabpanel">
+                    <div id="coursesContent">Loading...</div>
                 </div>
-                <div class="tab-pane fade" id="news">
-                    @Html.Partial("_NewsAdmin", Model.News)
+                <div class="tab-pane fade" id="news" role="tabpanel">
+                    <div id="newsContent">Loading...</div>
                 </div>
-                <div class="tab-pane fade" id="payments">
-                    @Html.Partial("_PaymentsAdmin", Model.Payments)
+                <div class="tab-pane fade" id="payments" role="tabpanel">
+                    <div id="paymentsContent">Loading...</div>
                 </div>
-                <div class="tab-pane fade" id="enrollments">
-                    @Html.Partial("_EnrollmentsAdmin", Model.Enrollments)
+                <div class="tab-pane fade" id="enrollments" role="tabpanel">
+                    <div id="enrollmentsContent">Loading...</div>
                 </div>
-                <div class="tab-pane fade" id="chat">
-                    @Html.Partial("_ChatAdmin", Model.ChatMessages)
+                <div class="tab-pane fade" id="chat" role="tabpanel">
+                    <div id="chatContent">Loading...</div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+
+@section Scripts {
+        <script>
+            function loadTabContent(tabId, url) {
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById(tabId).innerHTML = html;
+                    });
+            }
+
+            // Завантажуємо Users при старті
+            loadTabContent("usersContent", "/Administrator/Users");
+
+            // Підвантаження при кліку на вкладки
+            document.getElementById("users-tab").addEventListener("click", () => {
+                loadTabContent("usersContent", "/Administrator/Users");
+            });
+            document.getElementById("courses-tab").addEventListener("click", () => {
+                loadTabContent("coursesContent", "/Administrator/Courses");
+            });
+            document.getElementById("news-tab").addEventListener("click", () => {
+                loadTabContent("newsContent", "/Administrator/News");
+            });
+            document.getElementById("payments-tab").addEventListener("click", () => {
+                loadTabContent("paymentsContent", "/Administrator/Payments");
+            });
+            document.getElementById("enrollments-tab").addEventListener("click", () => {
+                loadTabContent("enrollmentsContent", "/Administrator/Enrollments");
+            });
+            document.getElementById("chat-tab").addEventListener("click", () => {
+                loadTabContent("chatContent", "/Chat/Index");
+            });
+            document.addEventListener("click", function(e) {
+                const link = e.target.closest("a[data-chat]");
+                if (link) {
+                    e.preventDefault();
+                    const url = link.getAttribute("href");
+                    loadTabContent("chatContent", url);
+                }
+            });
+            document.addEventListener("submit", function(e) {
+                const form = e.target;
+                if (form.id === "chatSearchForm") {
+                    e.preventDefault();
+                    const url = form.action + "?" + new URLSearchParams(new FormData(form));
+                    loadTabContent("chatContent", url);
+                }
+                if (form.id === "sendMessageForm") {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById("chatContent").innerHTML = html;
+                    });
+                }
+            });
+        </script>
+}

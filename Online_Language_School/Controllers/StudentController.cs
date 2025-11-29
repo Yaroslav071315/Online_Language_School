@@ -22,35 +22,6 @@ namespace Online_Language_School.Controllers
             return View("StudentOffice");
         }
 
-        ////GET: /Student/Schedule
-        //[HttpGet]
-        //public IActionResult Schedule()
-        //{
-        //    var studentId = HttpContext.Session.GetString("UserId");
-        //    if (string.IsNullOrEmpty(studentId))
-        //    {
-        //        TempData["Errors"] = "Not logged in.";
-        //        return RedirectToAction("Login", "Account");
-        //    }
-
-        //    // Отримуємо всі CourseId, на які студент записаний
-        //    var enrolledCourseIds = _context.Enrollments
-        //    .Where(e => e.StudentId == studentId)
-        //    .Select(e => e.CourseId)
-        //    .Distinct()
-        //    .ToList();
-
-        //    // Витягуємо уроки тільки з цих курсів
-        //    var lessons = _context.Lessons
-        //        .Include(l => l.Course)
-        //        .Where(l => enrolledCourseIds.Contains(l.CourseId))
-        //        .OrderBy(l => l.ScheduledDate)
-        //        .ToList();
-
-        //    // Якщо уроків немає — повертаємо порожній список, щоб уникнути null
-        //    return PartialView("ScheduleStudent", lessons ?? new List<Lesson>());
-        //}
-
         // GET: /Student/ScheduleAll
         [HttpGet]
         public IActionResult ScheduleAll()
@@ -58,8 +29,9 @@ namespace Online_Language_School.Controllers
             var studentId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(studentId))
             {
-                TempData["Errors"] = "Not logged in.";
-                return RedirectToAction("Login", "Account");
+                //TempData["Errors"] = "Not logged in.";
+                return Unauthorized();
+                //return RedirectToAction("Login", "Account");
             }
 
             // Витягуємо всі уроки з усіх курсів
@@ -70,35 +42,6 @@ namespace Online_Language_School.Controllers
 
             return PartialView("_ScheduleStudent", lessons ?? new List<Lesson>());
         }
-
-        //[HttpGet]
-        //public IActionResult Materials()
-        //{
-        //    var studentId = HttpContext.Session.GetString("UserId");
-        //    if (string.IsNullOrEmpty(studentId))
-        //    {
-        //        TempData["Errors"] = "Not logged in.";
-        //        return RedirectToAction("Login", "Account");
-        //    }
-
-        //    // Витягуємо всі LessonMaterials, які належать урокам курсів, на які студент записаний
-        //    var materials = _context.Enrollments
-        //        .Where(e => e.StudentId == studentId)
-        //        .Include(e => e.Course)
-        //            .ThenInclude(c => c.Lessons)
-        //                .ThenInclude(l => l.LessonMaterials)
-        //        .SelectMany(e => e.Course.Lessons.SelectMany(l => l.LessonMaterials))
-        //        .Include(m => m.Lesson)
-        //        .OrderByDescending(m => m.UploadedAt)
-        //        .ToList();
-
-        //    ViewBag.Lessons = _context.Lessons
-        //        .Where(l => l.Enrollments.Any(e => e.StudentId == studentId))
-        //        .OrderBy(l => l.ScheduledDate)
-        //        .ToList();
-
-        //    return PartialView("_MaterialsStudent", materials);
-        //}
 
         [HttpGet]
         public IActionResult Materials()
@@ -118,37 +61,6 @@ namespace Online_Language_School.Controllers
 
             return PartialView("_MaterialsStudent", materials);
         }
-
-
-        //[HttpGet]
-        //public IActionResult Progress()
-        //{
-        //    return PartialView("_Progress");
-        //}
-
-        //[HttpGet]
-        //public IActionResult Progress()
-        //{
-        //    var studentId = HttpContext.Session.GetString("UserId");
-        //    if (string.IsNullOrEmpty(studentId))
-        //    {
-        //        TempData["Errors"] = "Not logged in.";
-        //        return RedirectToAction("Login", "Account");
-        //    }
-
-        //    // Витягуємо всі тести з курсів, на які студент записаний
-        //    var tests = _context.Enrollments
-        //        .Where(e => e.StudentId == studentId)
-        //        .Include(e => e.Course)
-        //            .ThenInclude(c => c.Lessons)
-        //                .ThenInclude(l => l.Tests)
-        //        .SelectMany(e => e.Course.Lessons.SelectMany(l => l.Tests))
-        //        .Include(t => t.Lesson)
-        //        .OrderBy(t => t.Lesson.ScheduledDate)
-        //        .ToList();
-
-        //    return PartialView("_ProgressStudent", tests);
-        //}
 
         [HttpGet]
         public IActionResult Progress()

@@ -1,70 +1,4 @@
-﻿@* @{
-    ViewData["Title"] = "Log in";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    <!-- Сommon Layout -->
-}
-
-<div class="row">
-    <!-- Left panel -->
-    <aside class="col-md-3">
-        <div class="p-3 bg-light border rounded">
-            <h5>Navigation</h5>
-            <p><em>Note: fixed side-in panel, located on the left, will scroll independently</em></p>
-            <button class="btn btn-success w-100 mb-2" onclick="location.href='@Url.Action("Index","Home")'">Main page</button>
-            <button class="btn btn-info w-100" onclick="location.href='@Url.Action("Index","News")'">School news</button>
-        </div>
-    </aside>
-
-    <!-- Central panel -->
-    <section class="col-md-6 offset-md-1">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white text-center">
-                <h4>Log in</h4>
-            </div>
-            <div class="card-body">
-                <form asp-action="Login" method="post">
-                    <div class="mb-3">
-                        <label for="Name" class="form-label">Name</label>
-                        <input name="Name" type="text" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Email" class="form-label">Email</label>
-                        <input name="Email" type="email" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Password" class="form-label">Password</label>
-                        <input name="Password" type="password" class="form-control" required />
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Log in</button>
-                    <button class="btn btn-success" onclick="location.href='@Url.Action("Office","Student")'">  Go to Student Office </button>
-                    <button class="btn btn-success" onclick="location.href='@Url.Action("Office","Teacher")'">  Go to Teacher Office </button>
-                    <button class="btn btn-success" onclick="location.href='@Url.Action("Office","Administrator")'">  Go to Administartor Office </button>
-                </form>
-
-                @if (ViewBag.Error != null)
-                {
-                        <div class="alert alert-danger mt-2">@ViewBag.Error</div>
-                }
-
-                <div class="mt-3 text-center">
-                    <a href="#">Forgot your password?</a><br />
-                    <span>Already have an account? <a href="@Url.Action("Register","Account")">Sign up</a></span>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<!-- Footer -->
-<footer class="text-center mt-5 p-3 border-top">
-    <p>📞 Contact us: info@languageschool.com | +380 67 123 4567</p>
-    <p>🌐 Follow us:
-        <a href="#">Facebook</a> |
-        <a href="#">Instagram</a> |
-        <a href="#">LinkedIn</a>
-    </p>
-</footer> *@
-@{
+﻿@{
     ViewData["Title"] = "Log in";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -90,11 +24,11 @@
                 <form asp-action="Login" method="post">
                     <div class="mb-3">
                         <label for="Email" class="form-label">Email</label>
-                        <input name="email" type="email" class="form-control" required />
+                        <input id="Email" name="email" type="email" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="Password" class="form-label">Password</label>
-                        <input name="password" type="password" class="form-control" required />
+                        <input id="Password" name="password" type="password" class="form-control" required />
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Log in</button>
                 </form>

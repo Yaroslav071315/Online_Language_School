@@ -457,5 +457,55 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
+        // GET: /Administrator/Users
+        [HttpGet]
+        public async Task<IActionResult> Users()
+        {
+            var users = await _context.Users.ToListAsync();
+            return PartialView("_UsersAdmin", users);
+        }
+
+        // GET: /Administrator/Courses
+        [HttpGet]
+        public async Task<IActionResult> Courses()
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Teacher)
+                .ToListAsync();
+            return PartialView("_CoursesAdmin", courses);
+        }
+
+        // GET: /Administrator/News
+        [HttpGet]
+        public async Task<IActionResult> News()
+        {
+            var news = await _context.News
+                .OrderByDescending(n => n.PublishedAt)
+                .ToListAsync();
+            return PartialView("_NewsAdmin", news);
+        }
+
+
+        // GET: /Administrator/Payments
+        [HttpGet]
+        public async Task<IActionResult> Payments()
+        {
+            var payments = await _context.Payments
+                .Include(p => p.User)
+                .OrderByDescending(p => p.CompletedAt)
+                .ToListAsync();
+            return PartialView("_PaymentsAdmin", payments);
+        }
+
+        // GET: /Administrator/Enrollments
+        [HttpGet]
+        public async Task<IActionResult> Enrollments()
+        {
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .ToListAsync();
+            return PartialView("_EnrollmentsAdmin", enrollments);
+        }
     }
 }
