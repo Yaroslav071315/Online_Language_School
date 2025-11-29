@@ -13,7 +13,7 @@ namespace Online_Language_School.Models
         [Required]
         public string Content { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
         public bool IsPublished { get; set; } = true;
 

@@ -1,4 +1,7 @@
-﻿@model IEnumerable<Online_Language_School.Models.ApplicationUser>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@model IEnumerable<Online_Language_School.Models.ApplicationUser>
 
 <h4>Users Management</h4>
 <table class="table table-striped">
@@ -14,20 +17,83 @@
     <tbody>
         @foreach (var user in Model)
         {
-            <tr>
-                <td>@user.FirstName @user.LastName</td>
-                <td>@user.Email</td>
-                <td>@user.UserType</td>
-                <td>@(user.IsActive ? "Yes" : "No")</td>
-                <td>
-                    <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post">
-                        <input type="hidden" name="id" value="@user.Id" />
-                        <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")">
+                <tr>
+                    <td>@user.FirstName @user.LastName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        @{
+                            var roles = await UserManager.GetRolesAsync(user);
+                        }
+                        @string.Join(", ", roles)
+                    </td>
+                    <td>@(user.IsActive ? "Yes" : "No")</td>
+                    <td>
+                        <!-- Ban/Unban -->
+                        <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="button" class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")"
+                                    data-bs-toggle="modal" data-bs-target="#confirmModal-@user.Id">
                             @(user.IsActive ? "Ban" : "Unban")
+                            </button>
+                        </form>
+
+                        <!-- Change Role -->
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal-@user.Id">
+                            Change Role
                         </button>
-                    </form>
-                </td>
-            </tr>
+
+                        <!-- Modal Ban/Unban -->
+                        <div class="modal fade" id="confirmModal-@user.Id" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Підтвердження дії</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Ви впевнені, що хочете @(user.IsActive ? "заблокувати" : "розблокувати") користувача <b>@user.FirstName @user.LastName</b>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post">
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit" class="btn @(user.IsActive ? "btn-danger" : "btn-success")">
+                                                Так, @(user.IsActive ? "Ban" : "Unban")
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Change Role -->
+                        <div class="modal fade" id="roleModal-@user.Id" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Change Role for @user.FirstName @user.LastName</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form asp-action="ChangeUserRole" asp-controller="Administrator" method="post">
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <div class="mb-3">
+                                                <label class="form-label">Select new role</label>
+                                                <select name="role" class="form-select" required>
+                                                    <option value="Student" selected="@(await UserManager.IsInRoleAsync(user, "Student"))">Student</option>
+                                                    <option value="Teacher" selected="@(await UserManager.IsInRoleAsync(user, "Teacher"))">Teacher</option>
+                                                    <option value="Administrator" selected="@(await UserManager.IsInRoleAsync(user, "Administrator"))">Administrator</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
         }
     </tbody>
 </table>

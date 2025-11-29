@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Language_School.Models
 {
@@ -9,23 +10,13 @@ namespace Online_Language_School.Models
         Administrator = 2
     }
 
-    public class ApplicationUser
+    public class ApplicationUser : IdentityUser
     {
-        [Key]
-        public string Id { get; set; }
-
         [Required, MaxLength(100)]
         public string FirstName { get; set; }
 
         [Required, MaxLength(100)]
         public string LastName { get; set; }
-        public string UserName { get; set; }
-
-        [Required, MaxLength(255)]
-        public string Email { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
 
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;

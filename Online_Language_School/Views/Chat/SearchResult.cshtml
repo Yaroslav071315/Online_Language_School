@@ -1,0 +1,20 @@
+﻿@model List<ApplicationUser>
+@{
+    Layout = null;
+}
+
+<form id="chatSearchForm" asp-action="Search" method="get">
+    <div class="input-group mb-3">
+        <input name="query" placeholder="Type name or @@ID"
+               class="form-control" />
+        <button class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@foreach (var user in Model)
+{
+    <a href="/Chat/Conversation/@user.Id" data-chat
+    class="d-block border p-2 mb-2">
+        @user.FirstName @user.LastName
+    </a>
+}
