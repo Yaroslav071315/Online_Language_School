@@ -58,6 +58,29 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
+        [HttpPost]
+        public IActionResult ChangeUserRole(string id, string role)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Перетворюємо string role у enum UserType
+            user.UserType = role switch
+            {
+                "Teacher" => UserType.Teacher,
+                "Administrator" => UserType.Administrator,
+                _ => UserType.Student
+            };
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Office"); // твій метод/в'ю для списку користувачів
+        }
+
+
 
         // POST: /Administrator/CreateCourse
         [HttpPost]

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Online_Language_School.Data;
 using Online_Language_School.Models;
-using System;
-using System.Linq;
 
 namespace Online_Language_School.Controllers
 {
@@ -78,14 +76,18 @@ namespace Online_Language_School.Controllers
                 return View();
             }
 
-            // Визначаємо роль
-            UserType userType = role switch
-            {
-                "Student" => UserType.Student,
-                "Teacher" => UserType.Teacher,
-                "Administrator" => UserType.Administrator,
-                _ => UserType.Student
-            };
+            //// Визначаємо роль
+            //UserType userType = role switch
+            //{
+            //    "Student" => UserType.Student,
+            //    "Teacher" => UserType.Teacher,
+            //    "Administrator" => UserType.Administrator,
+            //    _ => UserType.Student
+            //};
+
+            // Роль завжди Student
+            UserType userType = UserType.Student;
+
 
             // Створюємо користувача
             var user = new ApplicationUser

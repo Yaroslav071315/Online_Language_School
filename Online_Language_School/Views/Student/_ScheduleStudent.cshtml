@@ -12,6 +12,7 @@
             <th>Duration</th>
             <th>Order</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -31,13 +32,50 @@
                                 ? "Planned"
                                 : "Completed")
                             </td>
+                            <td>
+                                <!-- View button -->
+                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewLesson-@lesson.Id">
+                                    👁 View
+                                </button>
+                            </td>
                         </tr>
+
+                        <!-- Modal with Bootstrap Card -->
+                        <div class="modal fade" id="viewLesson-@lesson.Id" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@lesson.Title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Course: @lesson.Course?.Title</h5>
+                                                <p class="card-text">@lesson.Description</p>
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item">Scheduled: @(lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</li>
+                                                    <li class="list-group-item">Duration: @lesson.DurationMinutes min</li>
+                                                    <li class="list-group-item">Order: @lesson.OrderNumber</li>
+                                                    <li class="list-group-item">Status: @(lesson.ScheduledDate.HasValue && lesson.ScheduledDate.Value > DateTime.Now ? "Planned" : "Completed")</li>
+                                                    <li class="list-group-item">Lesson Id: @lesson.Id</li>
+                                                    <li class="list-group-item">Course Id: @lesson.CourseId</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
             }
         }
         else
         {
                 <tr>
-                    <td colspan="7" class="text-center text-muted">No lessons available</td>
+                    <td colspan="8" class="text-center text-muted">No lessons available</td>
                 </tr>
         }
     </tbody>
@@ -59,6 +97,7 @@
         </thead>
         <tbody>
             @{
+                var lessons = Model?.ToList() ?? new List<Online_Language_School.Models.Lesson>();
                 var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 var daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                 var currentDay = 1;
@@ -77,10 +116,8 @@
                             else
                             {
                                 var date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, currentDay);
-                                var hasLesson = (Model != null && Model.Any(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value.Date == date.Date));
-                                                <td class="@(hasLesson ? "bg-success text-white" : "")">
-                                    @currentDay
-                                                </td>
+                                bool hasLesson = lessons.Any(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value.Date == date.Date);
+                                                <td class="@(hasLesson ? "bg-success text-white" : "")">@currentDay</td>
                                 ;
                                 currentDay++;
                             }
