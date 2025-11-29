@@ -31,15 +31,6 @@
                         <label for="RepeatPassword" class="form-label">Repeat Password</label>
                         <input id="RepeatPassword" name="RepeatPassword" type="password" class="form-control" required />
                     </div>
-                    <div class="mb-3">
-                        <label for="Role" class="form-label">Choose role</label>
-                        <select id="Role" name="Role" class="form-select" required>
-                            <option value="">-- Select role --</option>
-                            <option value="Student">Student</option>
-                            <option value="Teacher">Teacher</option>
-                            <option value="Administrator">Administrator</option>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-primary w-100">Create account</button>
                 </form>
 
@@ -47,11 +38,6 @@
                 {
                     @Html.ValidationSummary(false, "", new { @class = "alert alert-danger mt-2" })
                 }
-
-                @* @if (ViewBag.Error != null)
-                {
-                        <div class="alert alert-danger mt-2">@ViewBag.Error</div>
-                } *@
 
                 <div class="text-center mt-3">
                     Already have an account? <a href="@Url.Action("Login","Account")">Log in</a>

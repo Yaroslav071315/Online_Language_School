@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Online_Language_School.Models;
-using System;
-using System.Threading.Tasks;
 
 namespace Online_Language_School.Controllers
 {
@@ -83,13 +81,9 @@ namespace Online_Language_School.Controllers
                 return View();
             }
 
-            string normalizedRole = role switch
-            {
-                "Student" => "Student",
-                "Teacher" => "Teacher",
-                "Administrator" => "Administrator",
-                _ => "Student"
-            };
+            // Роль завжди Student
+            string normalizedRole = "Student";
+
 
             var user = new ApplicationUser
             {

@@ -23,22 +23,57 @@
                         <tbody>
                     @foreach (var material in group)
                     {
-                                <tr>
-                                    <td>@material.Title</td>
-                                    <td>@material.FileType</td>
-                                    <td>@(material.FileSize / 1024)</td>
-                                    <td>@material.Lesson?.Title</td>
-                                    <td>@material.UploadedAt.ToString("yyyy-MM-dd")</td>
-                                    <td>@(material.ExpiryDate?.ToString("yyyy-MM-dd") ?? "-")</td>
-                                    <td>
-                                        <a class="btn btn-sm btn-primary" target="_blank" href="@material.FileUrl">
-                                            View
-                                        </a>
-                                        <a class="btn btn-sm btn-success" href="@material.FileUrl" download>
-                                            Download
-                                        </a>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>@material.Title</td>
+                                        <td>@material.FileType</td>
+                                        <td>@(material.FileSize / 1024)</td>
+                                        <td>@material.Lesson?.Title</td>
+                                        <td>@material.UploadedAt.ToString("yyyy-MM-dd")</td>
+                                        <td>@(material.ExpiryDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                        <td>
+                                            <!-- View button -->
+                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewMaterial-@material.Id">
+                                                👁 View
+                                            </button>
+
+                                            <a class="btn btn-sm btn-success" href="@material.FileUrl" download>
+                                                Download
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal with Bootstrap Card -->
+                                    <div class="modal fade" id="viewMaterial-@material.Id" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">@material.Title</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">Lesson: @material.Lesson?.Title</h5>
+                                                            <p class="card-text">Type: @material.FileType</p>
+                                                            <ul class="list-group list-group-flush">
+                                                                <li class="list-group-item">File URL: <a href="@material.FileUrl" target="_blank">@material.FileUrl</a></li>
+                                                                <li class="list-group-item">Size: @(material.FileSize / 1024) KB</li>
+                                                                <li class="list-group-item">Uploaded: @material.UploadedAt.ToString("yyyy-MM-dd")</li>
+                                                                <li class="list-group-item">Expiry: @(material.ExpiryDate?.ToString("yyyy-MM-dd") ?? "-")</li>
+                                                                <li class="list-group-item">Material Id: @material.Id</li>
+                                                                <li class="list-group-item">Lesson Id: @material.LessonId</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a class="btn btn-primary" target="_blank" href="@material.FileUrl">Open</a>
+                                                    <a class="btn btn-success" href="@material.FileUrl" download>Download</a>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                     }
                         </tbody>
                     </table>

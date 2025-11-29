@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Online_Language_School.Data;
 using Online_Language_School.Models;
@@ -9,12 +10,14 @@ namespace Online_Language_School.Controllers
     public class AdministratorController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
-
-        public AdministratorController(ApplicationDbContext context)
+        public AdministratorController(ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // ====== ГОЛОВНА СТОРІНКА АДМІНА ======
@@ -58,6 +61,36 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserRole(string id, string role)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Отримати всі поточні ролі користувача
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            // Видалити користувача з усіх ролей
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Не вдалося видалити старі ролі");
+                return RedirectToAction("Office");
+            }
+
+            // Додати нову роль
+            var addResult = await _userManager.AddToRoleAsync(user, role);
+            if (!addResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Не вдалося додати нову роль");
+                return RedirectToAction("Office");
+            }
+
+            return RedirectToAction("Office"); // твій метод/в'ю для списку користувачів
+        }
 
         // POST: /Administrator/CreateCourse
         [HttpPost]
