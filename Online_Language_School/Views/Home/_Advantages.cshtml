@@ -1,12 +1,14 @@
-﻿<section id="advantages">
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<section id="advantages">
     <details>
-        <summary>✅ Advantages</summary>
+        <summary>✅ @Localizer["AdvantagesTitle"]</summary>
         <ul>
-            <li>Convenient access</li>
-            <li>Intuitive design for easy learning</li>
-            <li>Transparent pricing</li>
-            <li>Certified teachers</li>
-            <li>Online materials available</li>
+            <li>@Localizer["AdvantageAccess"]</li>
+            <li>@Localizer["AdvantageDesign"]</li>
+            <li>@Localizer["AdvantagePricing"]</li>
+            <li>@Localizer["AdvantageTeachers"]</li>
+            <li>@Localizer["AdvantageMaterials"]</li>
         </ul>
     </details>
 </section>

@@ -1,8 +1,14 @@
-﻿<section id="about">
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<section id="about">
     <details>
-        <summary>🏫 About Our School</summary>
-        <p>We provide high-quality online language education with flexible schedules and interactive lessons.</p>
-        <img src="https://via.placeholder.com/600x200" alt="School illustration" style="width:100%; border-radius:8px; margin-top:10px;" />
-        <a class="btn btn-success" href="@Url.Action("Details", "Courses", new { id = 1 })">Enroll on a course</a>
+        <summary>🏫 @Localizer["AboutTitle"]</summary>
+        <p>@Localizer["AboutDescription"]</p>
+        <img src="https://via.placeholder.com/600x200" 
+             alt="@Localizer["AboutImageAlt"]" 
+             style="width:100%; border-radius:8px; margin-top:10px;" />
+        <a class="btn btn-success" href="@Url.Action("Details", "Courses", new { id = 1 })">
+            @Localizer["AboutButton"]
+        </a>
     </details>
 </section>

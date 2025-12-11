@@ -26,6 +26,7 @@
 
 //app.Run();
 
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Online_Language_School.Data;
 
@@ -49,8 +50,30 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Додаємо підтримку локалізації
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+var supportedCultures = new[] { "en", "uk" };
+
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("en")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+// залишаємо тільки cookie-провайдер
+localizationOptions.RequestCultureProviders = new[] { new CookieRequestCultureProvider() };
+
+
+
+
 
 var app = builder.Build();
+
+app.UseRequestLocalization(localizationOptions);
 
 // стандартний пайплайн
 //if (!app.Environment.IsDevelopment())

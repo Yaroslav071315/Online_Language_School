@@ -1,4 +1,6 @@
-﻿@{
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
     ViewData["Title"] = "Online Language School";
     Layout = null;
     <!-- повноекранна сторінка -->
@@ -116,15 +118,25 @@
 <body>
     <!-- Sidebar -->
     <nav>
-        <h2>Menu</h2>
+       <h2>@Localizer["Menu"]</h2>
         <ul>
-            <li><a href="#about">About school</a></li>
-            <li><a href="#advantages">Advantages</a></li>
-            <li><a href="#contacts">Our contacts</a></li>
-            <li><a href="#news">School news</a></li>
-            <li><a href="/Account/Login">Log in / Sign up</a></li>
+            <li><a class="ms-3 href="#about">@Localizer["AboutSchool"]</a></li>
+            <li><a class="ms-3 href="#advantages">@Localizer["Advantages"]</a></li>
+            <li><a class="ms-3 href="#contacts">@Localizer["Contacts"]</a></li>
+            <li><a class="ms-3 href="#news">@Localizer["SchoolNews"]</a></li>
+            <li><a class="ms-3 href="/Account/Login">@Localizer["LoginSignup"]</a></li>
         </ul>
-        <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+
+         <!-- Language selector -->
+        <form id="selectLanguageForm" asp-controller="Home" asp-action="SetLanguage" method="post" class="ms-3">
+            <select name="culture" onchange="document.getElementById('selectLanguageForm').submit()" class="form-select form-select-sm">
+                <option value="en" selected="@(System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "en")">English</option>
+                <option value="uk" selected="@(System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "uk")">Українська</option>
+            </select>
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+        </form>
+
+        <button class="theme-toggle" onclick="toggleTheme()">@Localizer["ToggleTheme"]</button>
     </nav>
 
     <!-- Main content -->

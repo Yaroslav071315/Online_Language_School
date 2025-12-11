@@ -1,16 +1,19 @@
-﻿@model IEnumerable<Online_Language_School.Models.ApplicationUser>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<Online_Language_School.Models.ApplicationUser>
 
-<h4>Users Management</h4>
+<h4>@Localizer["UsersManagement"]</h4>
+
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Active</th>
-            <th>Actions</th>
+            <th>@Localizer["FullName"]</th>
+            <th>@Localizer["Email"]</th>
+            <th>@Localizer["Role"]</th>
+            <th>@Localizer["Active"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var user in Model)
         {
@@ -18,42 +21,52 @@
                     <td>@user.FirstName @user.LastName</td>
                     <td>@user.Email</td>
                     <td>@user.UserType</td>
-                    <td>@(user.IsActive ? "Yes" : "No")</td>
+                    <td>@(user.IsActive ? Localizer["Yes"] : Localizer["No"])</td>
+
                     <td>
                         <!-- Ban/Unban -->
-                        <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <button type="button" class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")"
-                                    data-bs-toggle="modal" data-bs-target="#confirmModal-@user.Id">
-                            @(user.IsActive ? "Ban" : "Unban")
-                            </button>
-                        </form>
+                        <button type="button"
+                                class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmModal-@user.Id">
+                        @(user.IsActive ? Localizer["Ban"] : Localizer["Unban"])
+                        </button>
 
                         <!-- Change Role -->
-                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal-@user.Id">
-                            Change Role
+                        <button type="button"
+                                class="btn btn-sm btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#roleModal-@user.Id">
+                        @Localizer["ChangeRole"]
                         </button>
 
                         <!-- Modal Ban/Unban -->
                         <div class="modal fade" id="confirmModal-@user.Id" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
+
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Підтвердження дії</h5>
+                                        <h5 class="modal-title">@Localizer["ConfirmAction"]</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
+
                                     <div class="modal-body">
-                                        Ви впевнені, що хочете @(user.IsActive ? "заблокувати" : "розблокувати") користувача <b>@user.FirstName @user.LastName</b>?
+                                    @Localizer["ConfirmBanUnban", user.FirstName + " " + user.LastName, user.IsActive ? Localizer["Ban"].Value : Localizer["Unban"].Value]
                                     </div>
+
                                     <div class="modal-footer">
                                         <form asp-action="ToggleUserActive" asp-controller="Administrator" method="post">
                                             <input type="hidden" name="id" value="@user.Id" />
                                             <button type="submit" class="btn @(user.IsActive ? "btn-danger" : "btn-success")">
-                                                Так, @(user.IsActive ? "Ban" : "Unban")
+                                            @Localizer["Yes"], @(user.IsActive ? Localizer["Ban"] : Localizer["Unban"])
                                             </button>
                                         </form>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        @Localizer["Cancel"]
+                                        </button>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -62,24 +75,35 @@
                         <div class="modal fade" id="roleModal-@user.Id" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
+
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Change Role for @user.FirstName @user.LastName</h5>
+                                        <h5 class="modal-title">@Localizer["ChangeRoleFor", user.FirstName + " " + user.LastName]</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
+
                                     <div class="modal-body">
                                         <form asp-action="ChangeUserRole" asp-controller="Administrator" method="post">
                                             <input type="hidden" name="id" value="@user.Id" />
+
                                             <div class="mb-3">
-                                                <label class="form-label">Select new role</label>
+                                                <label class="form-label">@Localizer["SelectNewRole"]</label>
                                                 <select name="role" class="form-select" required>
-                                                    <option value="Student" selected="@(user.UserType == Online_Language_School.Models.UserType.Student)">Student</option>
-                                                    <option value="Teacher" selected="@(user.UserType == Online_Language_School.Models.UserType.Teacher)">Teacher</option>
-                                                    <option value="Administrator" selected="@(user.UserType == Online_Language_School.Models.UserType.Administrator)">Administrator</option>
+                                                    <option value="Student" selected="@(user.UserType == Online_Language_School.Models.UserType.Student)">
+                                                    @Localizer["Student"]
+                                                    </option>
+                                                    <option value="Teacher" selected="@(user.UserType == Online_Language_School.Models.UserType.Teacher)">
+                                                    @Localizer["Teacher"]
+                                                    </option>
+                                                    <option value="Administrator" selected="@(user.UserType == Online_Language_School.Models.UserType.Administrator)">
+                                                    @Localizer["Administrator"]
+                                                    </option>
                                                 </select>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Save</button>
+
+                                            <button type="submit" class="btn btn-primary">@Localizer["Save"]</button>
                                         </form>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

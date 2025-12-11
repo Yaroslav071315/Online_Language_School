@@ -1,18 +1,19 @@
-﻿@model IEnumerable<Online_Language_School.Models.ChatMessage>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<Online_Language_School.Models.ChatMessage>
 
-<h4>💬 Chat (Student)</h4>
+<h4>💬 @Localizer["ChatStudent"]</h4>
 
 <!-- Форма для відправки повідомлення -->
 <form asp-action="SendMessage" asp-controller="Student" method="post" class="mb-3 border p-3 rounded bg-light">
     <div class="row g-2 mb-2">
         <div class="col-4">
-            <input name="receiverId" class="form-control" placeholder="Receiver Id" required />
+            <input name="receiverId" class="form-control" placeholder="@Localizer["ReceiverIdPlaceholder"]" required />
         </div>
         <div class="col-6">
-            <input name="content" class="form-control" placeholder="Type your message..." required />
+            <input name="content" class="form-control" placeholder="@Localizer["MessagePlaceholder"]" required />
         </div>
         <div class="col-2">
-            <button type="submit" class="btn btn-primary w-100">📩 Send</button>
+            <button type="submit" class="btn btn-primary w-100">📩 @Localizer["SendButton"]</button>
         </div>
     </div>
 </form>
@@ -21,10 +22,10 @@
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-            <th>Sender</th>
-            <th>Receiver</th>
-            <th>Message</th>
-            <th>Sent At</th>
+            <th>@Localizer["Sender"]</th>
+            <th>@Localizer["Receiver"]</th>
+            <th>@Localizer["Message"]</th>
+            <th>@Localizer["SentAt"]</th>
         </tr>
     </thead>
     <tbody>

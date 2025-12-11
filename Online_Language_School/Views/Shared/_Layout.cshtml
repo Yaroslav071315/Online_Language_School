@@ -1,5 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<!DOCTYPE html>
+<html lang="@System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - Online Language School</title>
@@ -42,14 +46,24 @@
     <header class="d-flex align-items-center p-3 bg-light border-bottom">
         <a class="navbar-brand fw-bold text-primary" href="/">🎓 Language School</a>
         <nav class="ms-4">
-            <a class="me-3"  href="/">About</a>
-            <a class="me-3"  href="/">Advantages</a>
-            <a class="me-3"  href="/">Contacts</a>
-            <a class="me-3" href="/News">News</a>
-            <a class="me-3" href="/Account/Login">Log in / Sign up</a>
+            <a class="me-3" href="/">@Localizer["About"]</a>
+            <a class="me-3" href="/">@Localizer["Advantages"]</a>
+            <a class="me-3" href="/">@Localizer["Contacts"]</a>
+            <a class="me-3" href="/News">@Localizer["News"]</a>
+            <a class="me-3" href="/Account/Login">@Localizer["LoginSignup"]</a>
         </nav>
-        <!-- 🌙 Toggle Theme button доступний всюди -->
-        <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+
+        <!-- Language selector -->
+        <form id="selectLanguageForm" asp-controller="Home" asp-action="SetLanguage" method="post" class="ms-3">
+            <select name="culture" onchange="document.getElementById('selectLanguageForm').submit()" class="form-select form-select-sm">
+                <option value="en" selected="@(System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "en")">English</option>
+                <option value="uk" selected="@(System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "uk")">Українська</option>
+            </select>
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+        </form>
+
+        <!-- 🌙 Toggle Theme button -->
+        <button class="theme-toggle" onclick="toggleTheme()"> @Localizer["ToggleTheme"]</button>
     </header>
 
     <!-- Main content -->
@@ -59,8 +73,8 @@
 
     <!-- Footer -->
     <footer class="text-center mt-5 p-3 border-top">
-        <p>📞 Contact us: info@languageschool.com | +380 67 123 4567</p>
-        <p>🌐 Follow us:
+        <p>📞 @Localizer["ContactUs"]: info@languageschool.com | +380 67 123 4567</p>
+        <p>🌐 @Localizer["FollowUs"]:
             <a href="#">Facebook</a> |
             <a href="#">Instagram</a> |
             <a href="#">LinkedIn</a>
@@ -70,15 +84,12 @@
     <script>
         function toggleTheme() {
             document.body.classList.toggle("dark");
-            // збереження вибору у localStorage
             if (document.body.classList.contains("dark")) {
                 localStorage.setItem("theme", "dark");
             } else {
                 localStorage.setItem("theme", "light");
             }
         }
-
-        // при завантаженні сторінки застосовуємо збережену тему
         window.onload = function () {
             if (localStorage.getItem("theme") === "dark") {
                 document.body.classList.add("dark");

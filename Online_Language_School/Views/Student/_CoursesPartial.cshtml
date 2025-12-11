@@ -1,4 +1,5 @@
-﻿@using Online_Language_School.ViewModels
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@using Online_Language_School.ViewModels
 @using Online_Language_School.Models
 @model CourseSearchViewModel
 
@@ -6,22 +7,22 @@
     <form method="get" asp-action="Courses" asp-controller="Student" id="courseSearchForm">
         <div class="row g-2">
             <div class="col-md-2">
-                <input type="number" name="MaxStudents" value="@Model.MaxStudents" class="form-control" placeholder="Max Students" />
+                <input type="number" name="MaxStudents" value="@Model.MaxStudents" class="form-control" placeholder="@Localizer["MaxStudentsPlaceholder"]" />
             </div>
             <div class="col-md-2">
-                <input type="text" name="Level" value="@Model.Level" class="form-control" placeholder="Level" />
+                <input type="text" name="Level" value="@Model.Level" class="form-control" placeholder="@Localizer["LevelPlaceholder"]" />
             </div>
             <div class="col-md-2">
-                <input type="text" name="Language" value="@Model.Language" class="form-control" placeholder="Language" />
+                <input type="text" name="Language" value="@Model.Language" class="form-control" placeholder="@Localizer["LanguagePlaceholder"]" />
             </div>
             <div class="col-md-2">
-                <input type="number" step="0.01" name="Price" value="@Model.Price" class="form-control" placeholder="Max Price" />
+                <input type="number" step="0.01" name="Price" value="@Model.Price" class="form-control" placeholder="@Localizer["PricePlaceholder"]" />
             </div>
             <div class="col-md-2">
-                <input type="text" name="Format" value="@Model.Format" class="form-control" placeholder="Format" />
+                <input type="text" name="Format" value="@Model.Format" class="form-control" placeholder="@Localizer["FormatPlaceholder"]" />
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">🔍 Search</button>
+                <button type="submit" class="btn btn-primary w-100">🔍 @Localizer["SearchButton"]</button>
             </div>
         </div>
     </form>
@@ -39,11 +40,11 @@
                                 <h5 class="card-title">@course.Title</h5>
                                 <p class="card-text">@course.Description</p>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">📖 Language: @course.Language</li>
-                                    <li class="list-group-item">🎯 Level: @course.Level</li>
-                                    <li class="list-group-item">👥 Max Students: @course.MaxStudents</li>
-                                    <li class="list-group-item">💳 Price: @course.Price ₴</li>
-                                    <li class="list-group-item">🖥 Format: @course.Format</li>
+                                    <li class="list-group-item">📖 @Localizer["Language"]: @course.Language</li>
+                                    <li class="list-group-item">🎯 @Localizer["Level"]: @course.Level</li>
+                                    <li class="list-group-item">👥 @Localizer["MaxStudents"]: @course.MaxStudents</li>
+                                    <li class="list-group-item">💳 @Localizer["Price"]: @course.Price ₴</li>
+                                    <li class="list-group-item">🖥 @Localizer["Format"]: @course.Format</li>
                                 </ul>
                             </div>
                         </div>
@@ -53,5 +54,5 @@
 }
 else
 {
-        <p class="text-muted">❌ No courses found for selected filters.</p>
+        <p class="text-muted">❌ @Localizer["NoCoursesFound"]</p>
 }

@@ -1,16 +1,17 @@
-﻿@model IEnumerable<Online_Language_School.Models.Payment>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<Online_Language_School.Models.Payment>
 
-<h4>💳 Payments</h4>
-<p>Total payments loaded: @ViewBag.Count</p>
+<h4>💳 @Localizer["Payments"]</h4>
+<p>@Localizer["TotalPayments"]: @ViewBag.Count</p>
 
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-            <th>Date & Time</th>
-            <th>Course</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>@Localizer["DateTime"]</th>
+            <th>@Localizer["Course"]</th>
+            <th>@Localizer["Amount"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
     <tbody>
@@ -25,11 +26,11 @@
                             <td>
                         @if (payment.Status == "Pending")
                         {
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        <span class="badge bg-warning text-dark">@Localizer["Pending"]</span>
                         }
                         else if (payment.Status == "Completed")
                         {
-                                        <span class="badge bg-success">Completed</span>
+                                        <span class="badge bg-success">@Localizer["Completed"]</span>
                         }
                         else
                         {
@@ -37,14 +38,13 @@
                         }
                             </td>
                             <td>
-                                <!-- View button -->
                                 <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPayment-@payment.Id">
-                                    👁 View
+                                    👁 @Localizer["View"]
                                 </button>
 
                         @if (payment.Status == "Pending")
                         {
-                                        <button class="btn btn-sm btn-primary">Upload receipt</button>
+                                        <button class="btn btn-sm btn-primary">@Localizer["UploadReceipt"]</button>
                         }
                         else
                         {
@@ -53,25 +53,25 @@
                             </td>
                         </tr>
 
-                        <!-- Modal with Bootstrap Card -->
+                        <!-- Modal -->
                         <div class="modal fade" id="viewPayment-@payment.Id" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-md">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Payment #@payment.Id</h5>
+                                        <h5 class="modal-title">@Localizer["Payment"] #@payment.Id</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 class="card-title">Course: @payment.Course?.Title</h5>
+                                                <h5 class="card-title">@Localizer["Course"]: @payment.Course?.Title</h5>
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Amount: @payment.Amount @payment.Currency</li>
-                                                    <li class="list-group-item">Status: @payment.Status</li>
-                                                    <li class="list-group-item">Created At: @payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
-                                                    <li class="list-group-item">Payment Id: @payment.Id</li>
-                                                    <li class="list-group-item">Course Id: @payment.CourseId</li>
-                                                    <li class="list-group-item">User Id: @payment.UserId</li>
+                                                    <li class="list-group-item">@Localizer["Amount"]: @payment.Amount @payment.Currency</li>
+                                                    <li class="list-group-item">@Localizer["Status"]: @payment.Status</li>
+                                                    <li class="list-group-item">@Localizer["CreatedAt"]: @payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+                                                    <li class="list-group-item">@Localizer["PaymentId"]: @payment.Id</li>
+                                                    <li class="list-group-item">@Localizer["CourseId"]: @payment.CourseId</li>
+                                                    <li class="list-group-item">@Localizer["UserId"]: @payment.UserId</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -79,9 +79,9 @@
                                     <div class="modal-footer">
                                 @if (payment.Status == "Pending")
                                 {
-                                                <button class="btn btn-primary">Upload receipt</button>
+                                                <button class="btn btn-primary">@Localizer["UploadReceipt"]</button>
                                 }
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
         else
         {
                 <tr>
-                    <td colspan="5" class="text-center text-muted">No payments found.</td>
+                    <td colspan="5" class="text-center text-muted">@Localizer["NoPayments"]</td>
                 </tr>
         }
     </tbody>

@@ -1,87 +1,112 @@
-﻿@model IEnumerable<Online_Language_School.Models.Course>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<Online_Language_School.Models.Course>
 
-<h4 class="mb-3">➕ Manage Courses</h4>
+<h4 class="mb-3">➕ @Localizer["ManageCourses"]</h4>
 
 <!-- Accordion для Create/Edit -->
 <div class="accordion mb-4" id="courseAccordion">
+
+    <!-- CREATE -->
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingCreate">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreate">
-                ➕ Create New Course
+                ➕ @Localizer["CreateNewCourse"]
             </button>
         </h2>
+
         <div id="collapseCreate" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
             <div class="accordion-body">
+
                 <form asp-action="CreateCourse" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="title" class="form-control" placeholder="Title" required /></div>
-                        <div class="col-6"><input name="language" class="form-control" placeholder="Language" required /></div>
+                        <div class="col-6"><input name="title" class="form-control" placeholder="@Localizer["Title"]" required /></div>
+                        <div class="col-6"><input name="language" class="form-control" placeholder="@Localizer["Language"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="level" class="form-control" placeholder="Level" required /></div>
-                        <div class="col-6"><input name="format" class="form-control" placeholder="Format" required /></div>
+                        <div class="col-6"><input name="level" class="form-control" placeholder="@Localizer["Level"]" required /></div>
+                        <div class="col-6"><input name="format" class="form-control" placeholder="@Localizer["Format"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="Price" required /></div>
-                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="Max Students" /></div>
+                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="@Localizer["Price"]" required /></div>
+                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="@Localizer["MaxStudents"]" /></div>
                     </div>
-                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="Image URL" /></div>
-                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="Description" required></textarea></div>
-                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="Administrator Id" required /></div>
-                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="Teacher Id" required /></div>
-                    <button type="submit" class="btn btn-primary">✅ Create Course</button>
+
+                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="@Localizer["ImageUrl"]" /></div>
+                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="@Localizer["Description"]" required></textarea></div>
+
+                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="@Localizer["AdministratorId"]" required /></div>
+                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="@Localizer["TeacherId"]" required /></div>
+
+                    <button type="submit" class="btn btn-primary">✅ @Localizer["CreateCourse"]</button>
                 </form>
+
             </div>
         </div>
     </div>
 
+    <!-- EDIT -->
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingEdit">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdit">
-                ✏️ Edit Existing Course
+                ✏️ @Localizer["EditExistingCourse"]
             </button>
         </h2>
+
         <div id="collapseEdit" class="accordion-collapse collapse" data-bs-parent="#courseAccordion">
             <div class="accordion-body">
+
                 <form asp-action="EditCourse" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="Course Id to Edit" required /></div>
+
+                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="@Localizer["CourseIdToEdit"]" required /></div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="title" class="form-control" placeholder="Title" required /></div>
-                        <div class="col-6"><input name="language" class="form-control" placeholder="Language" required /></div>
+                        <div class="col-6"><input name="title" class="form-control" placeholder="@Localizer["Title"]" required /></div>
+                        <div class="col-6"><input name="language" class="form-control" placeholder="@Localizer["Language"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="level" class="form-control" placeholder="Level" required /></div>
-                        <div class="col-6"><input name="format" class="form-control" placeholder="Format" required /></div>
+                        <div class="col-6"><input name="level" class="form-control" placeholder="@Localizer["Level"]" required /></div>
+                        <div class="col-6"><input name="format" class="form-control" placeholder="@Localizer["Format"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="Price" required /></div>
-                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="Max Students" /></div>
+                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="@Localizer["Price"]" required /></div>
+                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="@Localizer["MaxStudents"]" /></div>
                     </div>
-                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="Image URL" /></div>
-                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="Description" required></textarea></div>
-                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="Administrator Id" required /></div>
-                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="Teacher Id" required /></div>
-                    <button type="submit" class="btn btn-success">💾 Save Changes</button>
+
+                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="@Localizer["ImageUrl"]" /></div>
+                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="@Localizer["Description"]" required></textarea></div>
+
+                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="@Localizer["AdministratorId"]" required /></div>
+                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="@Localizer["TeacherId"]" required /></div>
+
+                    <button type="submit" class="btn btn-success">💾 @Localizer["SaveChanges"]</button>
                 </form>
+
             </div>
         </div>
     </div>
+
 </div>
 
-<h4 class="mb-3">📋 All Courses</h4>
+<h4 class="mb-3">📋 @Localizer["AllCourses"]</h4>
 
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Language</th>
-            <th>Level</th>
-            <th>Format</th>
-            <th>Price</th>
-            <th>Actions</th>
+            <th>@Localizer["Id"]</th>
+            <th>@Localizer["Title"]</th>
+            <th>@Localizer["Language"]</th>
+            <th>@Localizer["Level"]</th>
+            <th>@Localizer["Format"]</th>
+            <th>@Localizer["Price"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var course in Model)
         {
@@ -92,58 +117,66 @@
                     <td>@course.Level</td>
                     <td>@course.Format</td>
                     <td>@course.Price</td>
+
                     <td>
-                        <!-- View button opens modal with card -->
                         <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewCourse-@course.Id">
-                            👁 View
+                            👁 @Localizer["View"]
                         </button>
 
                         <form asp-action="DeleteCourse" asp-controller="Administrator" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@course.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            <button type="submit" class="btn btn-sm btn-danger">🗑 @Localizer["Delete"]</button>
                         </form>
 
                         <form asp-action="ToggleCourseActive" asp-controller="Administrator" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@course.Id" />
                             <button type="submit" class="btn btn-sm btn-secondary">
-                            @(course.IsActive ? "⏸ Freeze" : "▶️ Start")
+                            @(course.IsActive ? Localizer["Freeze"] : Localizer["Start"])
                             </button>
                         </form>
                     </td>
                 </tr>
 
-                <!-- Modal with Bootstrap Card -->
+                <!-- Modal -->
                 <div class="modal fade" id="viewCourse-@course.Id" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
+
                             <div class="modal-header">
                                 <h5 class="modal-title">@course.Title</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
+
                             <div class="modal-body">
                                 <div class="card">
+
                                 @if (!string.IsNullOrEmpty(course.ImageUrl))
                                 {
                                             <img src="@course.ImageUrl" class="card-img-top" alt="Course image">
                                 }
+
                                     <div class="card-body">
                                         <h5 class="card-title">@course.Title (@course.Language, @course.Level)</h5>
                                         <p class="card-text">@course.Description</p>
+
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">Format: @course.Format</li>
-                                            <li class="list-group-item">Price: @course.Price</li>
-                                            <li class="list-group-item">Max Students: @course.MaxStudents</li>
-                                            <li class="list-group-item">Active: @(course.IsActive ? "Yes" : "No")</li>
-                                            <li class="list-group-item">Created: @course.CreatedAt.ToShortDateString()</li>
-                                            <li class="list-group-item">AdministratorId: @course.AdministratorId</li>
-                                            <li class="list-group-item">TeacherId: @course.TeacherId</li>
+                                            <li class="list-group-item">@Localizer["Format"]: @course.Format</li>
+                                            <li class="list-group-item">@Localizer["Price"]: @course.Price</li>
+                                            <li class="list-group-item">@Localizer["MaxStudents"]: @course.MaxStudents</li>
+                                            <li class="list-group-item">@Localizer["Active"]: @(course.IsActive ? Localizer["Yes"] : Localizer["No"])</li>
+                                            <li class="list-group-item">@Localizer["Created"]: @course.CreatedAt.ToShortDateString()</li>
+                                            <li class="list-group-item">@Localizer["AdministratorId"]: @course.AdministratorId</li>
+                                            <li class="list-group-item">@Localizer["TeacherId"]: @course.TeacherId</li>
                                         </ul>
                                     </div>
+
                                 </div>
                             </div>
+
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                             </div>
+
                         </div>
                     </div>
                 </div>

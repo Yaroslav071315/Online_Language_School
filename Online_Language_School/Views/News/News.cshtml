@@ -1,8 +1,10 @@
-﻿@{
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
     ViewData["Title"] = "School News";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
+@* <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -22,6 +24,30 @@
         <h3>Holiday Schedule Announced</h3>
         <p>Classes will be paused from December 24 to January 2 for winter holidays.</p>
         <p><em>Published: 2025-10-10</em></p>
+    </article>
+</body>
+</html> *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="font-family: Arial; padding: 40px;">
+    <h1>@Localizer["SchoolNews"]</h1>
+
+    <article style="margin-bottom: 30px;">
+        <h3>@Localizer["H1"]</h3>
+        <p>@Localizer["P1"]</p>
+        <p><em>@Localizer["P12"]</em></p>
+    </article>
+
+    <article>
+        <h3>@Localizer["H2"]</h3>
+        <p>@Localizer["P2"]</p>
+        <p><em>@Localizer["P22"]</em></p>
     </article>
 </body>
 </html>

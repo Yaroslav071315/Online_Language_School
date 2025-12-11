@@ -1,8 +1,10 @@
-﻿<footer id="contacts">
-    <p>📞 Contact us: info@languageschool.com | +380 67 123 4567</p>
-    <p>🌐 Follow us:
-        <a href="#">Facebook</a> |
-        <a href="#">Instagram</a> |
-        <a href="#">LinkedIn</a>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<footer id="contacts">
+    <p>📞 @Localizer["FooterContact"]</p>
+    <p>🌐 @Localizer["FooterFollowUs"]:
+        <a href="#">@Localizer["FooterFacebook"]</a> |
+        <a href="#">@Localizer["FooterInstagram"]</a> |
+        <a href="#">@Localizer["FooterLinkedIn"]</a>
     </p>
 </footer>

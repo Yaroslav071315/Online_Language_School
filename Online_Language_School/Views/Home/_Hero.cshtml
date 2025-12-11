@@ -1,5 +1,9 @@
-﻿<section class="hero">
-    <h1>Welcome to Our Language School 🎓</h1>
-    <p>Learn languages easily with certified teachers</p>
-    <button onclick="location.href='@Url.Action("Register","Account")'">Sign up for a trial lesson</button>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<section class="hero">
+    <h1>@Localizer["HeroTitle"] 🎓</h1>
+    <p>@Localizer["HeroSubtitle"]</p>
+    <button onclick="location.href='@Url.Action("Register","Account")'">
+        @Localizer["HeroButton"]
+    </button>
 </section>

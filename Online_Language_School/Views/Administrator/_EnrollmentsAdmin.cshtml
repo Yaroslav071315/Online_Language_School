@@ -1,81 +1,104 @@
-﻿@model IEnumerable<Online_Language_School.Models.Enrollment>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<Online_Language_School.Models.Enrollment>
 
-<h4 class="mb-3">📚 Enrollment Management</h4>
+<h4 class="mb-3">📚 @Localizer["EnrollmentManagement"]</h4>
 
-<!-- Accordion для Create/Edit -->
+<!-- Accordion Create/Edit -->
 <div class="accordion mb-4" id="enrollmentAccordion">
+
+    <!-- CREATE -->
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingCreateEnrollment">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreateEnrollment">
-                ➕ Create Enrollment
+                ➕ @Localizer["CreateEnrollment"]
             </button>
         </h2>
+
         <div id="collapseCreateEnrollment" class="accordion-collapse collapse show" data-bs-parent="#enrollmentAccordion">
             <div class="accordion-body">
+
                 <form asp-action="CreateEnrollment" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="studentId" class="form-control" placeholder="Student Id" required /></div>
-                        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="Course Id" required /></div>
+                        <div class="col-6"><input name="studentId" class="form-control" placeholder="@Localizer["StudentId"]" required /></div>
+                        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="@Localizer["CourseId"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="status" class="form-control" placeholder="Status (Pending/Active/...)" required /></div>
-                        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="Paid Amount" /></div>
+                        <div class="col-6"><input name="status" class="form-control" placeholder="@Localizer["Status"]" required /></div>
+                        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="@Localizer["PaidAmount"]" /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="startDate" type="date" class="form-control" /></div>
-                        <div class="col-6"><input name="endDate" type="date" class="form-control" /></div>
+                        <div class="col-6"><input name="startDate" type="date" class="form-control" placeholder="@Localizer["StartDate"]" /></div>
+                        <div class="col-6"><input name="endDate" type="date" class="form-control" placeholder="@Localizer["EndDate"]" /></div>
                     </div>
-                    <button type="submit" class="btn btn-primary">✅ Create Enrollment</button>
+
+                    <button type="submit" class="btn btn-primary">✅ @Localizer["CreateEnrollment"]</button>
+
                 </form>
+
             </div>
         </div>
     </div>
 
+    <!-- EDIT -->
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingEditEnrollment">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditEnrollment">
-                ✏️ Edit Enrollment
+                ✏️ @Localizer["EditEnrollment"]
             </button>
         </h2>
+
         <div id="collapseEditEnrollment" class="accordion-collapse collapse" data-bs-parent="#enrollmentAccordion">
             <div class="accordion-body">
+
                 <form asp-action="EditEnrollment" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="Enrollment Id to Edit" required /></div>
+
+                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="@Localizer["EnrollmentIdToEdit"]" required /></div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="studentId" class="form-control" placeholder="Student Id" required /></div>
-                        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="Course Id" required /></div>
+                        <div class="col-6"><input name="studentId" class="form-control" placeholder="@Localizer["StudentId"]" required /></div>
+                        <div class="col-6"><input name="courseId" type="number" class="form-control" placeholder="@Localizer["CourseId"]" required /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="status" class="form-control" placeholder="Status" required /></div>
-                        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="Paid Amount" /></div>
+                        <div class="col-6"><input name="status" class="form-control" placeholder="@Localizer["Status"]" required /></div>
+                        <div class="col-6"><input name="paidAmount" type="number" step="0.01" class="form-control" placeholder="@Localizer["PaidAmount"]" /></div>
                     </div>
+
                     <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="startDate" type="date" class="form-control" /></div>
-                        <div class="col-6"><input name="endDate" type="date" class="form-control" /></div>
+                        <div class="col-6"><input name="startDate" type="date" class="form-control" placeholder="@Localizer["StartDate"]" /></div>
+                        <div class="col-6"><input name="endDate" type="date" class="form-control" placeholder="@Localizer["EndDate"]" /></div>
                     </div>
-                    <button type="submit" class="btn btn-success">💾 Save Changes</button>
+
+                    <button type="submit" class="btn btn-success">💾 @Localizer["SaveChanges"]</button>
+
                 </form>
+
             </div>
         </div>
     </div>
+
 </div>
 
-<h4 class="mb-3">📋 All Enrollments</h4>
+<h4 class="mb-3">📋 @Localizer["AllEnrollments"]</h4>
 
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-            <th>Id</th>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Status</th>
-            <th>Paid Amount</th>
-            <th>Enrollment Date</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Actions</th>
+            <th>@Localizer["Id"]</th>
+            <th>@Localizer["Student"]</th>
+            <th>@Localizer["Course"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["PaidAmount"]</th>
+            <th>@Localizer["EnrollmentDate"]</th>
+            <th>@Localizer["Start"]</th>
+            <th>@Localizer["End"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var e in Model)
         {
@@ -88,47 +111,54 @@
                     <td>@e.EnrollmentDate.ToString("yyyy-MM-dd")</td>
                     <td>@(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</td>
                     <td>@(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+
                     <td>
-                        <!-- View button -->
                         <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewEnrollment-@e.Id">
-                            👁 View
+                            👁 @Localizer["View"]
                         </button>
 
                         <form asp-action="DeleteEnrollment" asp-controller="Administrator" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@e.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            <button type="submit" class="btn btn-sm btn-danger">🗑 @Localizer["Delete"]</button>
                         </form>
                     </td>
                 </tr>
 
-                <!-- Modal with Bootstrap Card -->
+                <!-- Modal -->
                 <div class="modal fade" id="viewEnrollment-@e.Id" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-md">
                         <div class="modal-content">
+
                             <div class="modal-header">
-                                <h5 class="modal-title">Enrollment #@e.Id</h5>
+                                <h5 class="modal-title">@Localizer["Enrollment"] #@e.Id</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
+
                             <div class="modal-body">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Course: @e.Course?.Title</h5>
-                                        <p class="card-text">Student: @e.Student?.FirstName @e.Student?.LastName</p>
+
+                                        <h5 class="card-title">@Localizer["Course"]: @e.Course?.Title</h5>
+                                        <p class="card-text">@Localizer["Student"]: @e.Student?.FirstName @e.Student?.LastName</p>
+
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">Status: @e.Status</li>
-                                            <li class="list-group-item">Paid Amount: @e.PaidAmount</li>
-                                            <li class="list-group-item">Enrollment Date: @e.EnrollmentDate.ToString("yyyy-MM-dd")</li>
-                                            <li class="list-group-item">Start Date: @(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</li>
-                                            <li class="list-group-item">End Date: @(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</li>
-                                            <li class="list-group-item">Student Id: @e.StudentId</li>
-                                            <li class="list-group-item">Course Id: @e.CourseId</li>
+                                            <li class="list-group-item">@Localizer["Status"]: @e.Status</li>
+                                            <li class="list-group-item">@Localizer["PaidAmount"]: @e.PaidAmount</li>
+                                            <li class="list-group-item">@Localizer["EnrollmentDate"]: @e.EnrollmentDate.ToString("yyyy-MM-dd")</li>
+                                            <li class="list-group-item">@Localizer["StartDate"]: @(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</li>
+                                            <li class="list-group-item">@Localizer["EndDate"]: @(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</li>
+                                            <li class="list-group-item">@Localizer["StudentId"]: @e.StudentId</li>
+                                            <li class="list-group-item">@Localizer["CourseId"]: @e.CourseId</li>
                                         </ul>
+
                                     </div>
                                 </div>
                             </div>
+
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                             </div>
+
                         </div>
                     </div>
                 </div>

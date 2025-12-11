@@ -1,7 +1,11 @@
-﻿<section>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+<section id="whychooseus">
     <details>
-        <summary>📢 Why Choose Us?</summary>
-        <p>Join thousands of students who improved their skills with us.</p>
-        <button onclick="location.href='@Url.Action("Register","Account")'">Sign up for a trial lesson</button>
+        <summary>📢 @Localizer["WhyChooseUsTitle"]</summary>
+        <p>@Localizer["WhyChooseUsDescription"]</p>
+        <button onclick="location.href='@Url.Action("Register","Account")'">
+            @Localizer["WhyChooseUsButton"]
+        </button>
     </details>
 </section>

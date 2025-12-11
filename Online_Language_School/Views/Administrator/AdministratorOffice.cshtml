@@ -1,43 +1,54 @@
-﻿@model Online_Language_School.ViewModels.AdminOfficeViewModel
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model Online_Language_School.ViewModels.AdminOfficeViewModel
 
 @{
-    ViewData["Title"] = "Administrator Office";
+    ViewData["Title"] = Localizer["AdminOfficeTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
     <div class="row">
+
         <!-- Ліва панель -->
         <nav class="col-2 bg-light border-end"
              style="position:fixed; top:0; left:0; height:100vh; overflow-y:auto; padding:20px;">
-            <h5>Menu</h5>
+
+            <h5>@Localizer["Menu"]</h5>
+
             <ul class="nav flex-column nav-pills">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users">Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses">Courses</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news">News</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments">Payments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments">Enrollments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat">Chat</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users">@Localizer["Users"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses">@Localizer["Courses"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news">@Localizer["News"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments">@Localizer["Payments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments">@Localizer["Enrollments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat">@Localizer["Chat"]</button></li>
             </ul>
+
             <hr />
+
             <footer class="small text-center">
-                <p>📞 info@languageschool.com | +380 67 123 4567</p>
-                <p>🌐 <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">LinkedIn</a></p>
+                <p>📞 @Localizer["ContactInfo"]</p>
+                <p>🌐 
+                    <a href="#">@Localizer["Facebook"]</a> | 
+                    <a href="#">@Localizer["Instagram"]</a> | 
+                    <a href="#">@Localizer["LinkedIn"]</a>
+                </p>
             </footer>
         </nav>
 
         <!-- Центральна частина -->
         <main class="col-10 offset-2 p-4">
-            <h2 class="mb-4">Administrator Office</h2>
+
+            <h2 class="mb-4">@Localizer["AdminOfficeTitle"]</h2>
 
             <!-- Вкладки -->
             <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users" type="button">Users</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses" type="button">Courses</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news" type="button">News</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments" type="button">Payments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments" type="button">Enrollments</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat" type="button">Chat</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users" type="button">@Localizer["Users"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#courses" type="button">@Localizer["Courses"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#news" type="button">@Localizer["News"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payments" type="button">@Localizer["Payments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#enrollments" type="button">@Localizer["Enrollments"]</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat" type="button">@Localizer["Chat"]</button></li>
             </ul>
 
             <!-- Контент вкладок -->
@@ -61,6 +72,7 @@
                     @Html.Partial("_ChatAdmin", Model.ChatMessages)
                 </div>
             </div>
+
         </main>
     </div>
 </div>

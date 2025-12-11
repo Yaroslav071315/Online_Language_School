@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Online_Language_School.Controllers
@@ -39,5 +40,24 @@ namespace Online_Language_School.Controllers
             // тут можна підтягувати новини з БД
             return View();
         }
+
+
+        //layout
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            if (string.IsNullOrEmpty(culture))
+                culture = "en"; // дефолт
+
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return LocalRedirect(returnUrl ?? "/");
+        }
+
+
     }
 }

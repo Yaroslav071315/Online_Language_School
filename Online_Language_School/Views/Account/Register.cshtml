@@ -1,76 +1,7 @@
-﻿@* @{
-    ViewData["Title"] = "Sign up";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    <!-- ✅ тепер використовуємо спільний Layout -->
-}
-
-<div class="row">
-    <!-- Ліва панель -->
-    <aside class="col-md-3">
-        <div class="p-3 bg-light border rounded">
-            <h5>Navigation</h5>
-            <p><em>Note: fixed side-in panel, located on the left, will scroll independently</em></p>
-            <button class="btn btn-success w-100 mb-2" onclick="location.href='@Url.Action("Index","Home")'">Main page</button>
-            <button class="btn btn-info w-100" onclick="location.href='@Url.Action("Index","News")'">School news</button>
-        </div>
-    </aside>
-
-    <!-- Центральна форма -->
-    <section class="col-md-6 offset-md-1">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white text-center">
-                <h4>Sign up</h4>
-            </div>
-            <div class="card-body">
-                <form asp-action="Register" method="post">
-                    <div class="mb-3">
-                        <label for="Name" class="form-label">Name</label>
-                        <input name="Name" type="text" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Email" class="form-label">Email</label>
-                        <input name="Email" type="email" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Password" class="form-label">Password</label>
-                        <input name="Password" type="password" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="RepeatPassword" class="form-label">Repeat Password</label>
-                        <input name="RepeatPassword" type="password" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Role" class="form-label">Choose role</label>
-                        <select name="Role" class="form-select" required>
-                            <option value="">-- Select role --</option>
-                            <option value="Student">Student</option>
-                            <option value="Teacher">Teacher</option>
-                            <option value="Administrator">Administrator</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Create account</button>
-                </form>
-
-                <div class="text-center mt-3">
-                    Already have an account? <a href="@Url.Action("Login","Account")">Log in</a>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<!-- Footer -->
-<footer class="text-center mt-5 p-3 border-top">
-    <p>📞 Contact us: info@languageschool.com | +380 67 123 4567</p>
-    <p>🌐 Follow us:
-        <a href="#">Facebook</a> |
-        <a href="#">Instagram</a> |
-        <a href="#">LinkedIn</a>
-    </p>
-</footer> *@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Sign up";
+    ViewData["Title"] = Localizer["RegisterTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -78,34 +9,32 @@
     <section class="col-md-6 offset-md-3">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white text-center">
-                <h4>Sign up</h4>
+                <h4>@Localizer["RegisterHeader"]</h4>
             </div>
             <div class="card-body">
                 <form asp-action="Register" method="post">
                     <div class="mb-3">
-                        <label for="FirstName" class="form-label">First Name</label>
+                        <label for="FirstName" class="form-label">@Localizer["FirstNameLabel"]</label>
                         <input name="FirstName" type="text" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="LastName" class="form-label">Last Name</label>
+                        <label for="LastName" class="form-label">@Localizer["LastNameLabel"]</label>
                         <input name="LastName" type="text" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="Email" class="form-label">Email</label>
+                        <label for="Email" class="form-label">@Localizer["EmailLabel"]</label>
                         <input name="Email" type="email" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="Password" class="form-label">Password</label>
+                        <label for="Password" class="form-label">@Localizer["PasswordLabel"]</label>
                         <input name="Password" type="password" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="RepeatPassword" class="form-label">Repeat Password</label>
+                        <label for="RepeatPassword" class="form-label">@Localizer["RepeatPasswordLabel"]</label>
                         <input name="RepeatPassword" type="password" class="form-control" required />
                     </div>
 
-                    <!-- Поле вибору ролі видалено -->
-
-                    <button type="submit" class="btn btn-primary w-100">Create account</button>
+                    <button type="submit" class="btn btn-primary w-100">@Localizer["CreateAccountButton"]</button>
                 </form>
 
                 @if (ViewBag.Error != null)
@@ -114,7 +43,7 @@
                 }
 
                 <div class="text-center mt-3">
-                    Already have an account? <a href="@Url.Action("Login","Account")">Log in</a>
+                    @Localizer["AlreadyHaveAccount"] <a href="@Url.Action("Login","Account")">@Localizer["LoginLink"]</a>
                 </div>
             </div>
         </div>

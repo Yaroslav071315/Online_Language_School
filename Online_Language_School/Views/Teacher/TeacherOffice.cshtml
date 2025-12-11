@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Teacher Office";
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["TeacherOfficeTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -8,53 +10,53 @@
         <!-- Ліва панель -->
         <nav class="col-2 bg-light border-end"
              style="position:fixed; top:0; left:0; height:100vh; overflow-y:auto; padding:20px;">
-            <h5>Menu</h5>
+            <h5>@Localizer["Menu"]</h5>
             <ul class="nav flex-column nav-pills">
-                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#schedule">Schedule</a></li>
-                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Home")">Main page</a></li>
-                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","News")">School news</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact the administration</a></li>
+                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#schedule">📅 @Localizer["Schedule"]</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Home")">@Localizer["MainPage"]</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","News")">@Localizer["SchoolNews"]</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">@Localizer["ContactAdministration"]</a></li>
             </ul>
             <hr />
             <footer class="small text-center">
-                <p>📞 info@languageschool.com | +380 67 123 4567</p>
-                <p>🌐 <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">LinkedIn</a></p>
+                <p>📞 @Localizer["ContactInfo"]</p>
+                <p>🌐 <a href="#">@Localizer["Facebook"]</a> | <a href="#">@Localizer["Instagram"]</a> | <a href="#">@Localizer["LinkedIn"]</a></p>
             </footer>
         </nav>
 
         <!-- Центральна частина -->
         <main class="col-10 offset-2 p-4">
-            <h2 class="mb-4">👨‍🏫 My Office</h2>
+            <h2 class="mb-4">👨‍🏫 @Localizer["MyOffice"]</h2>
 
             <!-- Вкладки -->
             <ul class="nav nav-tabs" id="teacherTabs" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button">📅 Schedule</button>
+                    <button class="nav-link active" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button">📅 @Localizer["Schedule"]</button>
                 </li> 
                 <li class="nav-item">
-                    <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button">📂 Materials</button>
+                    <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button">📂 @Localizer["Materials"]</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button">📝 Tests</button>
+                    <button class="nav-link" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button">📝 @Localizer["Tests"]</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button">💬 Chat</button>
+                    <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button">💬 @Localizer["Chat"]</button>
                 </li>
             </ul>
 
             <!-- Контент вкладок -->
             <div class="tab-content mt-3">
                 <div class="tab-pane fade show active" id="schedule" role="tabpanel">
-                    <div id="scheduleContent">Loading...</div>
+                    <div id="scheduleContent">@Localizer["Loading"]</div>
                 </div>
                 <div class="tab-pane fade" id="materials" role="tabpanel">
-                    <div id="materialsContent">Loading...</div>
+                    <div id="materialsContent">@Localizer["Loading"]</div>
                 </div>
                 <div class="tab-pane fade" id="tests" role="tabpanel">
-                    <div id="testsContent">Loading...</div>
+                    <div id="testsContent">@Localizer["Loading"]</div>
                 </div>
                 <div class="tab-pane fade" id="chat" role="tabpanel">
-                    <div id="chatContent">Loading...</div>
+                    <div id="chatContent">@Localizer["Loading"]</div>
                 </div>
             </div>
         </main>
