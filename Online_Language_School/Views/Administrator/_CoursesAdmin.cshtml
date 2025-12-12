@@ -1,152 +1,139 @@
-﻿@model IEnumerable<Online_Language_School.Models.Course>
+﻿@model IEnumerable<Course>
+@using Online_Language_School.Models
 
-<h4 class="mb-3">➕ Manage Courses</h4>
-
-<!-- Accordion для Create/Edit -->
-<div class="accordion mb-4" id="courseAccordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingCreate">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreate">
-                ➕ Create New Course
-            </button>
-        </h2>
-        <div id="collapseCreate" class="accordion-collapse collapse show" data-bs-parent="#courseAccordion">
-            <div class="accordion-body">
-                <form asp-action="CreateCourse" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="title" class="form-control" placeholder="Title" required /></div>
-                        <div class="col-6"><input name="language" class="form-control" placeholder="Language" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="level" class="form-control" placeholder="Level" required /></div>
-                        <div class="col-6"><input name="format" class="form-control" placeholder="Format" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="Price" required /></div>
-                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="Max Students" /></div>
-                    </div>
-                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="Image URL" /></div>
-                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="Description" required></textarea></div>
-                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="Administrator Id" required /></div>
-                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="Teacher Id" required /></div>
-                    <button type="submit" class="btn btn-primary">✅ Create Course</button>
-                </form>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" asp-action="Courses" class="row g-2" courses-search>
+            <div class="col-md-3">
+                <input name="Title" class="form-control" placeholder="Title" />
             </div>
-        </div>
-    </div>
 
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingEdit">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdit">
-                ✏️ Edit Existing Course
-            </button>
-        </h2>
-        <div id="collapseEdit" class="accordion-collapse collapse" data-bs-parent="#courseAccordion">
-            <div class="accordion-body">
-                <form asp-action="EditCourse" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="Course Id to Edit" required /></div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="title" class="form-control" placeholder="Title" required /></div>
-                        <div class="col-6"><input name="language" class="form-control" placeholder="Language" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="level" class="form-control" placeholder="Level" required /></div>
-                        <div class="col-6"><input name="format" class="form-control" placeholder="Format" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="price" type="number" step="0.01" class="form-control" placeholder="Price" required /></div>
-                        <div class="col-6"><input name="maxStudents" type="number" class="form-control" placeholder="Max Students" /></div>
-                    </div>
-                    <div class="mb-2"><input name="imageUrl" class="form-control" placeholder="Image URL" /></div>
-                    <div class="mb-2"><textarea name="description" class="form-control" placeholder="Description" required></textarea></div>
-                    <div class="mb-2"><input name="administratorId" class="form-control" placeholder="Administrator Id" required /></div>
-                    <div class="mb-2"><input name="teacherId" class="form-control" placeholder="Teacher Id" required /></div>
-                    <button type="submit" class="btn btn-success">💾 Save Changes</button>
-                </form>
+            <div class="col-md-2">
+                <select name="Status" class="form-select">
+                    <option value="">All statuses</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Active">Active</option>
+                </select>
             </div>
-        </div>
+
+            <div class="col-md-2">
+                <input name="MinPrice" type="number" class="form-control" placeholder="Min price" />
+            </div>
+
+            <div class="col-md-2">
+                <input name="MaxPrice" type="number" class="form-control" placeholder="Max price" />
+            </div>
+
+            <div class="col-md-2">
+                <select name="OnlySubmitted" class="form-select">
+                    <option value="false">All</option>
+                    <option value="true">Only submitted</option>
+                </select>
+            </div>
+
+            <div class="col-md-1">
+                <button class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<h4 class="mb-3">📋 All Courses</h4>
-
-<table class="table table-striped table-bordered">
-    <thead class="table-dark">
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
         <tr>
-            <th>Id</th>
             <th>Title</th>
+            <th>Teacher</th>
+            <th>Price</th>
             <th>Language</th>
             <th>Level</th>
-            <th>Format</th>
-            <th>Price</th>
-            <th>Actions</th>
+            <th>Status</th>
+            <th width="240">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var course in Model)
         {
-                <tr>
-                    <td>@course.Id</td>
-                    <td>@course.Title</td>
-                    <td>@course.Language</td>
-                    <td>@course.Level</td>
-                    <td>@course.Format</td>
-                    <td>@course.Price</td>
-                    <td>
-                        <!-- View button opens modal with card -->
-                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewCourse-@course.Id">
-                            👁 View
+            <tr>
+                <td>@course.Title</td>
+                <td>@($"{course.Teacher?.FirstName} {course.Teacher?.LastName}")</td>
+                <td>@course.Price.ToString("F2")</td>
+                <td>@course.Language</td>
+                <td>@course.Level</td>
+                <td>
+                    <span class="badge bg-secondary">@course.Status</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info"
+                            data-bs-toggle="modal"
+                            data-bs-target="#viewCourseModal-@course.Id">
+                        View
+                    </button>
+
+                    @if (course.Status == CourseStatus.Submitted)
+                    {
+                        <form asp-action="ApproveCourse" method="post" class="d-inline" form-courses>
+                            <input type="hidden" name="id" value="@course.Id" />
+                            <button class="btn btn-sm btn-success">Approve</button>
+                        </form>
+
+                        <button class="btn btn-sm btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectCourseModal-@course.Id">
+                            Reject
                         </button>
+                    }
 
-                        <form asp-action="DeleteCourse" asp-controller="Administrator" method="post" class="d-inline">
+                    @if (course.Status == CourseStatus.Active ||
+                      course.Status == CourseStatus.Enrollment ||
+                      course.Status == CourseStatus.Approved)
+                    {
+                        <form asp-action="FreezeCourse" method="post" class="d-inline" form-courses>
                             <input type="hidden" name="id" value="@course.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+                            <button class="btn btn-sm btn-warning">Freeze</button>
                         </form>
+                    }
 
-                        <form asp-action="ToggleCourseActive" asp-controller="Administrator" method="post" class="d-inline">
+                    @if (course.Status == CourseStatus.Draft)
+                    {
+                        <form asp-action="StartCourse" method="post" class="d-inline" form-courses>
                             <input type="hidden" name="id" value="@course.Id" />
-                            <button type="submit" class="btn btn-sm btn-secondary">
-                            @(course.IsActive ? "⏸ Freeze" : "▶️ Start")
-                            </button>
+                            <button class="btn btn-sm btn-primary">Start</button>
                         </form>
-                    </td>
-                </tr>
-
-                <!-- Modal with Bootstrap Card -->
-                <div class="modal fade" id="viewCourse-@course.Id" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">@course.Title</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card">
-                                @if (!string.IsNullOrEmpty(course.ImageUrl))
-                                {
-                                            <img src="@course.ImageUrl" class="card-img-top" alt="Course image">
-                                }
-                                    <div class="card-body">
-                                        <h5 class="card-title">@course.Title (@course.Language, @course.Level)</h5>
-                                        <p class="card-text">@course.Description</p>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">Format: @course.Format</li>
-                                            <li class="list-group-item">Price: @course.Price</li>
-                                            <li class="list-group-item">Max Students: @course.MaxStudents</li>
-                                            <li class="list-group-item">Active: @(course.IsActive ? "Yes" : "No")</li>
-                                            <li class="list-group-item">Created: @course.CreatedAt.ToShortDateString()</li>
-                                            <li class="list-group-item">AdministratorId: @course.AdministratorId</li>
-                                            <li class="list-group-item">TeacherId: @course.TeacherId</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        }
+                    }
+                </td>
+            </tr>
+            }
     </tbody>
 </table>
+
+@foreach (var course in Model)
+{
+    @await Html.PartialAsync("_ViewCourseAdmin", course)
+
+    <div class="modal fade" id="rejectCourseModal-@course.Id" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="RejectCourse" method="post" form-courses>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reject course</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="CourseId" value="@course.Id" />
+                        <textarea name="Reason" class="form-control"
+                            rows="4"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger">Reject</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

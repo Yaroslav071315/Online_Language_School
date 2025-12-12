@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Online_Language_School.Data;
 using Online_Language_School.Models;
 using Online_Language_School.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Online_Language_School.Controllers
 {
@@ -10,10 +12,52 @@ namespace Online_Language_School.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+
         public StudentController(ApplicationDbContext context)
         {
             _context = context;
         }
+
+        private CourseSearchViewModel BuildCoursesVm(CourseSearchViewModel vm, string studentId)
+        {
+            var enrolledCourseIds = _context.Enrollments
+                .Where(e => e.StudentId == studentId)
+                .Select(e => e.CourseId)
+                .ToList();
+
+            var query = _context.Courses
+                .Include(c => c.Teacher)
+                .Include(c => c.Lessons)
+                .ThenInclude(l => l.LessonMaterials)
+                .Include(c => c.Lessons)
+                .ThenInclude(l => l.Tests)
+                .Where(c =>
+                    c.Status == CourseStatus.Enrollment ||
+                    enrolledCourseIds.Contains(c.Id))
+                .AsQueryable();
+
+            // ФІЛЬТРИ
+            if (!string.IsNullOrWhiteSpace(vm.Title))
+                query = query.Where(c => c.Title.Contains(vm.Title));
+            if (!string.IsNullOrWhiteSpace(vm.Format))
+                query = query.Where(c => c.Format == vm.Format);
+            if (!string.IsNullOrWhiteSpace(vm.Language))
+                query = query.Where(c => c.Language == vm.Language);
+            if (!string.IsNullOrWhiteSpace(vm.Level))
+                query = query.Where(c => c.Level == vm.Level);
+            if (vm.MinPrice.HasValue)
+                query = query.Where(c => c.Price >= vm.MinPrice);
+            if (vm.MaxPrice.HasValue)
+                query = query.Where(c => c.Price <= vm.MaxPrice);
+            if (vm.MinStudents.HasValue)
+                query = query.Where(c => c.MaxStudents >= vm.MinStudents);
+            if (vm.MaxStudents.HasValue)
+                query = query.Where(c => c.MaxStudents <= vm.MaxStudents);
+
+            vm.Courses = query.ToList();
+            return vm;
+        }
+
 
         // GET: /Student/Office
         [HttpGet]
@@ -28,35 +72,40 @@ namespace Online_Language_School.Controllers
         {
             var studentId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(studentId))
-            {
-                //TempData["Errors"] = "Not logged in.";
                 return Unauthorized();
-                //return RedirectToAction("Login", "Account");
-            }
 
-            // Витягуємо всі уроки з усіх курсів
-            var lessons = _context.Lessons
-                .Include(l => l.Course)
-                .OrderBy(l => l.ScheduledDate)
+            var planned = _context.PlannedLessons
+                .Include(p => p.Lesson)
+                .Include(p => p.Lesson.Course)
+                .Where(p =>
+                    p.StudentId == studentId &&
+                    p.Lesson.Course.Status == CourseStatus.Active)
+                .OrderBy(p => p.StartTime)
                 .ToList();
 
-            return PartialView("_ScheduleStudent", lessons ?? new List<Lesson>());
+            return PartialView("_ScheduleStudent", planned);
         }
+
 
         [HttpGet]
         public IActionResult Materials()
         {
-            // Просто дістаємо всі LessonMaterials з БД
+            var studentId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(studentId))
+                return Unauthorized();
+
+            var activeCourseIds = _context.Enrollments
+                .Where(e => e.StudentId == studentId && e.Status == "Active")
+                .Select(e => e.CourseId)
+                .ToList();
+
             var materials = _context.LessonMaterials
                 .Include(m => m.Lesson)
                     .ThenInclude(l => l.Course)
+                .Where(m =>
+                    activeCourseIds.Contains(m.Lesson.CourseId) &&
+                    m.Lesson.Course.Status == CourseStatus.Active)
                 .OrderByDescending(m => m.UploadedAt)
-                .ToList();
-
-            // Для зручності можна передати список уроків (не обов’язково)
-            ViewBag.Lessons = _context.Lessons
-                .Include(l => l.Course)
-                .OrderBy(l => l.ScheduledDate)
                 .ToList();
 
             return PartialView("_MaterialsStudent", materials);
@@ -65,15 +114,27 @@ namespace Online_Language_School.Controllers
         [HttpGet]
         public IActionResult Progress()
         {
-            // Витягуємо всі тести з бази з прив’язкою до уроків
+            var studentId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(studentId))
+                return Unauthorized();
+
+            var activeCourseIds = _context.Enrollments
+                .Where(e => e.StudentId == studentId && e.Status == "Active")
+                .Select(e => e.CourseId)
+                .ToList();
+
             var tests = _context.Tests
                 .Include(t => t.Lesson)
                     .ThenInclude(l => l.Course)
-                .OrderBy(t => t.Lesson.ScheduledDate)
+                .Where(t =>
+                    activeCourseIds.Contains(t.Lesson.CourseId) &&
+                    t.Lesson.Course.Status == CourseStatus.Active)
+                .OrderBy(t => t.Lesson.OrderNumber)
                 .ToList();
 
             return PartialView("_ProgressStudent", tests);
         }
+
 
         [HttpGet]
         public IActionResult Payments()
@@ -94,87 +155,145 @@ namespace Online_Language_School.Controllers
             return PartialView("_PaymentsStudent", payments);
         }
 
-        [HttpGet]
-        public IActionResult Chat()
+        public IActionResult Courses(CourseSearchViewModel vm)
         {
             var studentId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(studentId))
-            {
-                TempData["Errors"] = "Not logged in.";
-                return RedirectToAction("Login", "Account");
-            }
 
-            var messages = _context.ChatMessages
-                .Include(m => m.Sender)
-                .Include(m => m.Receiver)
-                .Where(m => m.SenderId == studentId || m.ReceiverId == studentId)
-                .OrderByDescending(m => m.SentAt)
+            vm = BuildCoursesVm(new CourseSearchViewModel(), studentId);
+            return PartialView("_CoursesPartial", vm);
+        }
+
+        // Helper: view student's enrollments (optional)
+        public IActionResult MyEnrollments()
+        {
+            var studentId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(studentId)) return RedirectToAction("Login", "Account");
+
+            var enrollments = _context.Enrollments
+                .Include(e => e.Course)
+                .Where(e => e.StudentId == studentId)
                 .ToList();
 
-            return PartialView("_ChatStudent", messages);
+            return View(enrollments);
         }
 
         [HttpPost]
-        public IActionResult SendMessage(string receiverId, string content)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadReceipt(int courseId, IFormFile receiptFile)
         {
             var studentId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(studentId))
-            {
-                TempData["Errors"] = "Not logged in.";
                 return RedirectToAction("Login", "Account");
+
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
+            if (course == null)
+            {
+                TempData["Errors"] = "Course not found.";
+                var vmErr = BuildCoursesVm(new CourseSearchViewModel(), studentId);
+                return PartialView("_CoursesPartial", vmErr);
             }
 
-            if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(receiverId))
+            if (receiptFile == null || receiptFile.Length == 0)
             {
-                TempData["Errors"] = "Message and Receiver are required.";
-                return RedirectToAction("Chat");
+                TempData["Errors"] = "Receipt file required.";
+                var vmErr = BuildCoursesVm(new CourseSearchViewModel(), studentId);
+                return PartialView("_CoursesPartial", vmErr);
             }
 
-            var msg = new ChatMessage
+            // Save file
+            var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "receipts");
+            Directory.CreateDirectory(uploadsDir);
+
+            var uniqueName = Guid.NewGuid().ToString() + Path.GetExtension(receiptFile.FileName);
+            var fullPath = Path.Combine(uploadsDir, uniqueName);
+
+            using (var fs = new FileStream(fullPath, FileMode.Create))
             {
-                Content = content,
-                SentAt = DateTime.UtcNow,
-                SenderId = studentId,
-                ReceiverId = receiverId
-            };
+                await receiptFile.CopyToAsync(fs);
+            }
 
-            _context.ChatMessages.Add(msg);
-            _context.SaveChanges();
+            // Якщо вже є pending payment від цього користувача для цього курсу — оновимо його,
+            // інакше створимо новий Payment. (Не створюємо Enrollment тут.)
+            var existing = await _context.Payments
+                .FirstOrDefaultAsync(p => p.UserId == studentId && p.CourseId == courseId && p.Status == "Pending");
 
-            return RedirectToAction("Office");
+            if (existing != null)
+            {
+                existing.TransactionId = uniqueName;
+                existing.CreatedAt = DateTime.UtcNow;
+                // залишаємо Amount як було (він має дорівнювати ціні курсу)
+                existing.Amount = course.Price;
+                _context.Payments.Update(existing);
+            }
+            else
+            {
+                var payment = new Payment
+                {
+                    Amount = course.Price,
+                    Currency = "UAH",
+                    Status = "Pending",
+                    TransactionId = uniqueName,
+                    PaymentMethod = null,
+                    CreatedAt = DateTime.UtcNow,
+                    CompletedAt = null,
+                    UserId = studentId,
+                    CourseId = courseId,
+                    ReceiptImagePath = $"/uploads/receipts/{uniqueName}"
+                };
+                await _context.Payments.AddAsync(payment);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Receipt uploaded — payment created (Pending). Admin will review.";
+
+            var vm = BuildCoursesVm(new CourseSearchViewModel(), studentId);
+            return PartialView("_CoursesPartial", vm);
         }
 
-        [HttpGet]
-        public IActionResult Courses(string level, string language, decimal? price, string format, int? maxStudents)
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelEnrollment(int courseId)
         {
-            var query = _context.Courses.AsQueryable();
+            var userId = HttpContext.Session.GetString("UserId");
 
-            if (!string.IsNullOrEmpty(level))
-                query = query.Where(c => c.Level == level);
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.CourseId == courseId && e.StudentId == userId);
 
-            if (!string.IsNullOrEmpty(language))
-                query = query.Where(c => c.Language == language);
-
-            if (!string.IsNullOrEmpty(format))
-                query = query.Where(c => c.Format == format);
-
-            if (price.HasValue)
-                query = query.Where(c => c.Price <= price.Value);
-
-            if (maxStudents.HasValue)
-                query = query.Where(c => c.MaxStudents <= maxStudents.Value);
-
-            var model = new CourseSearchViewModel
+            if (enrollment != null)
             {
-                Level = level,
-                Language = language,
-                Price = price,
-                Format = format,
-                MaxStudents = maxStudents,
-                Courses = query.ToList()
-            };
+                enrollment.Status = "Cancelled";
+                await _context.SaveChangesAsync();
 
-            return PartialView("_CoursesPartial", model);
+                // REFUND LOGIC HERE
+            }
+
+            var vm = BuildCoursesVm(new CourseSearchViewModel(), userId);
+            return PartialView("_CoursesPartial", vm);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestRefund(int courseId, string Reason)
+        {
+            var userId = HttpContext.Session.GetString("UserId");
+
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.CourseId == courseId && e.StudentId == userId);
+
+            if (enrollment != null)
+            {
+                enrollment.Status = "PendingRefund";
+                await _context.SaveChangesAsync();
+
+                // Save refund request for admins
+            }
+
+            var vm = BuildCoursesVm(new CourseSearchViewModel(), userId);
+            return PartialView("_CoursesPartial", vm);
+        }
+
     }
 }

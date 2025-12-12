@@ -1,0 +1,382 @@
+﻿@model Course
+@using Online_Language_School.Models
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <h4 class="mb-0">@Model.Title</h4>
+        <span class="badge bg-info">@Model.Status</span>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="/Teacher/Courses" class="btn btn-outline-secondary" edit-materials>
+            ← Back to Courses
+        </a>
+
+        @if (Model.Status == CourseStatus.Draft)
+        {
+            <button class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#editCourseInfoModal">
+                ✏ Edit course information
+            </button>    
+
+            <form asp-action="SubmitCourse" method="post" class="m-0" form-materials>
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-warning">
+                    📤 Submit for review
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<hr />
+
+@if (Model.Status != CourseStatus.Draft)
+{
+    <div class="alert alert-secondary mt-3">
+        Course is locked and cannot be modified.
+    </div>
+}
+else
+{
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Lessons</h5>
+        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#createLessonModal">➕ Add lesson</button>
+    </div>
+
+    <div class="accordion" id="lessonsAccordion">
+    @if (Model.Lessons != null && Model.Lessons.Any())
+    {
+        var sortedLessons = Model.Lessons.OrderBy(l => l.OrderNumber).ToList();
+        for (int i = 0; i < sortedLessons.Count; i++)
+        {
+            var lesson = sortedLessons[i];
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingLesson@lesson.Id">
+                    <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseLesson@(lesson.Id)">
+                        @lesson.OrderNumber - @lesson.Title
+                    </button>
+                </h2>
+                <div id="collapseLesson@(lesson.Id)" class="accordion-collapse collapse" data-bs-parent="#lessonsAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <div>
+                                <strong>@lesson.Title</strong>
+                                <div class="text-muted small">@lesson.Description</div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editLessonModal-@lesson.Id">Edit</button>
+
+                                <form asp-action="DeleteLesson" method="post" class="d-inline ms-1"
+                                    onsubmit="return confirm('Delete lesson and all its materials/tests?');" form-materials>
+                                    <input type="hidden" name="id" value="@lesson.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Materials list -->
+                        <div class="mb-3">
+                            <h6>Materials</h6>
+                            <table class="table table-sm">
+                                <thead><tr><th>Title</th><th>Type</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    @if (lesson.LessonMaterials != null && lesson.LessonMaterials.Any())
+                                    {
+                                        foreach (var m in lesson.LessonMaterials)
+                                        {
+                                            <tr>
+                                                <td>@m.Title</td>
+                                                <td>@m.FileType</td>
+                                                <td>
+                                                    <a href="@m.FileUrl" target="_blank" class="btn btn-sm btn-info">Open</a>
+                                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editMaterialModal-@m.Id">Edit</button>
+
+                                                    <form asp-action="DeleteMaterial" method="post" class="d-inline ms-1"
+                                                        onsubmit="return confirm('Delete material?');" form-materials>
+                                                        <input type="hidden" name="id" value="@m.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="3" class="text-muted">No materials</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <!-- Add material form (inline compact) -->
+                            <form asp-action="CreateMaterial" method="post" class="row g-2 align-items-end" form-materials>
+                                <input type="hidden" name="lessonId" value="@lesson.Id" />
+                                <div class="col-auto"><input name="title" class="form-control form-control-sm" placeholder="Title" required /></div>
+                                <div class="col-auto"><input name="fileUrl" class="form-control form-control-sm" placeholder="File URL" required /></div>
+                                <div class="col-auto"><select name="fileType" class="form-select form-select-sm"><option>PDF</option><option>Video</option><option>Document</option></select></div>
+                                <div class="col-auto"><button class="btn btn-sm btn-success">Add</button></div>
+                            </form>
+                        </div>
+
+                        <!-- Tests (заглушки) -->
+                        <div>
+                            <h6>Tests (placeholders)</h6>
+                                <ul class="list-unstyled">
+                                    @if (lesson.Tests != null && lesson.Tests.Any())
+                                    {
+                                        foreach (var t in lesson.Tests)
+                                        {
+                                            <li class="mb-1">
+                                                <strong>@t.Title</strong>
+                                                <div class="d-inline ms-2">
+                                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editTestModal-@t.Id">Edit</button>
+                                                    <form asp-action="DeleteTest" method="post" class="d-inline ms-1" form-materials>
+                                                        <input type="hidden" name="id" value="@t.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                                <div class="text-muted small">@t.Description</div>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="text-muted">No tests</li>
+                                    }
+                                </ul>
+
+                                <form asp-action="CreateTest" method="post" class="row g-2" form-materials>
+                                    <input type="hidden" name="lessonId" value="@lesson.Id" />
+                                    <div class="col-6"><input name="title" class="form-control form-control-sm" placeholder="Test title" required /></div>
+                                    <div class="col-4"><input name="description" class="form-control form-control-sm" placeholder="Short description" /></div>
+                                    <div class="col-2"><button class="btn btn-sm btn-success">Add</button></div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Lesson Modal -->
+                <div class="modal fade" id="editLessonModal-@lesson.Id" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form asp-action="EditLesson" method="post" form-materials>
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit lesson</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" value="@lesson.Id" />
+                                    <div class="mb-2"><input name="title" value="@lesson.Title" class="form-control" required /></div>
+                                    <div class="mb-2"><textarea name="description" class="form-control" rows="3">@lesson.Description</textarea></div>
+                                    <div class="row g-2">
+                                        <div class="col"><input name="orderNumber" type="number" value="@lesson.OrderNumber" class="form-control" /></div>
+                                        <div class="col"><input name="durationMinutes" type="number" value="@lesson.DurationMinutes" class="form-control" /></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Material Modals -->
+                @if (lesson.LessonMaterials != null)
+                {
+                    foreach (var m in lesson.LessonMaterials)
+                    {
+                        <div class="modal fade" id="editMaterialModal-@m.Id" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form asp-action="EditMaterial" method="post" form-materials>
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit material</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id" value="@m.Id" />
+                                            <div class="mb-2"><input name="title" value="@m.Title" class="form-control" required /></div>
+                                            <div class="mb-2"><input name="fileUrl" value="@m.FileUrl" class="form-control" required /></div>
+                                            <div class="mb-2"><input name="fileType" value="@m.FileType" class="form-control" required /></div>
+                                            <div class="mb-2"><input name="fileSize" type="number" value="@m.FileSize" class="form-control" /></div>
+                                            <div class="mb-2"><input name="expiryDate" type="date" value="@(m.ExpiryDate?.ToString("yyyy-MM-dd"))" class="form-control" /></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <!-- Edit Test Modals -->
+                @if (lesson.Tests != null)
+                {
+                    foreach (var t in lesson.Tests)
+                    {
+                        <div class="modal fade" id="editTestModal-@t.Id" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form asp-action="EditTest" method="post" form-materials>
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit test</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id" value="@t.Id" />
+                                            <div class="mb-2"><input name="title" value="@t.Title" class="form-control" required /></div>
+                                            <div class="mb-2"><textarea name="description" class="form-control" rows="3">@t.Description</textarea></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            } // end lessons loop
+        }
+        else
+        {
+            <div class="text-muted">No lessons yet. Use the "Add lesson" button to create one.</div>
+        }
+    </div>
+
+    <!-- Create Lesson Modal -->
+    <div class="modal fade" id="createLessonModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="CreateLesson" method="post" form-materials>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create lesson</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="courseId" value="@Model.Id" />
+                        <div class="mb-2"><input name="title" class="form-control" placeholder="Lesson title" required /></div>
+                        <div class="mb-2"><textarea name="description" class="form-control" rows="3" placeholder="Description"></textarea></div>
+                        <div class="row g-2">
+                            <div class="col"><input name="orderNumber" type="number" class="form-control" placeholder="Order #" /></div>
+                            <div class="col"><input name="durationMinutes" type="number" class="form-control" placeholder="Duration minutes" /></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit course information modal -->
+    <div class="modal fade" id="editCourseInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form asp-action="EditCourse" method="post" form-materials>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit course information</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <input name="Title"
+                                       class="form-control"
+                                       value="@Model.Title"
+                                       required />
+                            </div>
+                            <div class="col-6">
+                                <input name="Language"
+                                       class="form-control"
+                                       value="@Model.Language"
+                                       required />
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-4">
+                                <select name="Level" class="form-select" required>
+                                    <option value="@Model.Level">@Model.Level</option>
+                                    <option>A1</option><option>A2</option>
+                                    <option>B1</option><option>B2</option>
+                                    <option>C1</option><option>C2</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <select name="Format" class="form-select" required>
+                                    <option value="@Model.Format">@Model.Format</option>
+                                    <option>Individual</option>
+                                    <option>Group</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input name="Price"
+                                       type="number"
+                                       step="0.01"
+                                       class="form-control"
+                                       value="@Model.Price" />
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <input name="MaxStudents"
+                                       type="number"
+                                       class="form-control"
+                                       value="@Model.MaxStudents" />
+                            </div>
+                            <div class="col-6">
+                                <input name="ImageUrl"
+                                       class="form-control"
+                                       value="@Model.ImageUrl"
+                                       placeholder="Image URL (optional)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <textarea name="Description"
+                                      class="form-control"
+                                      rows="5"
+                                      required>@Model.Description</textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+} <!-- end editable block -->

@@ -1,134 +1,88 @@
 ﻿@model IEnumerable<Online_Language_School.Models.Payment>
 
-<h4 class="mb-3">💳 Payments Management</h4>
+<h4 class="mb-3">Checking checks</h4>
 
-<!-- Accordion для Create/Edit -->
-<div class="accordion mb-4" id="paymentAccordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingCreatePayment">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreatePayment">
-                ➕ Create Payment
-            </button>
-        </h2>
-        <div id="collapseCreatePayment" class="accordion-collapse collapse show" data-bs-parent="#paymentAccordion">
-            <div class="accordion-body">
-                <form asp-action="CreatePayment" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="userId" class="form-control" placeholder="User Id" required /></div>
-                        <div class="col-6"><input name="courseId" class="form-control" placeholder="Course Id" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="amount" type="number" step="0.01" class="form-control" placeholder="Amount" required /></div>
-                        <div class="col-6"><input name="currency" class="form-control" placeholder="Currency" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="status" class="form-control" placeholder="Status" required /></div>
-                        <div class="col-6"><input name="createdAt" type="datetime-local" class="form-control" required /></div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">✅ Create Payment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingEditPayment">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditPayment">
-                ✏️ Edit Payment
-            </button>
-        </h2>
-        <div id="collapseEditPayment" class="accordion-collapse collapse" data-bs-parent="#paymentAccordion">
-            <div class="accordion-body">
-                <form asp-action="EditPayment" asp-controller="Administrator" method="post" class="border p-3 rounded bg-light">
-                    <div class="mb-2"><input name="id" type="number" class="form-control" placeholder="Payment Id to Edit" required /></div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="userId" class="form-control" placeholder="User Id" required /></div>
-                        <div class="col-6"><input name="courseId" class="form-control" placeholder="Course Id" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="amount" type="number" step="0.01" class="form-control" placeholder="Amount" required /></div>
-                        <div class="col-6"><input name="currency" class="form-control" placeholder="Currency" required /></div>
-                    </div>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input name="status" class="form-control" placeholder="Status" required /></div>
-                        <div class="col-6"><input name="createdAt" type="datetime-local" class="form-control" required /></div>
-                    </div>
-                    <button type="submit" class="btn btn-success">💾 Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<h4 class="mb-3">📋 All Payments</h4>
-
-<table class="table table-striped table-bordered">
+<table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
-            <th>Id</th>
-            <th>User</th>
+            <th>Date</th>
             <th>Course</th>
-            <th>Amount</th>
-            <th>Currency</th>
+            <th>Student</th>
+            <th>Check</th>
             <th>Status</th>
-            <th>Created At</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var payment in Model)
+        @foreach (var p in Model)
         {
-                <tr>
-                    <td>@payment.Id</td>
-                    <td>@payment.User?.FirstName @payment.User?.LastName (@payment.UserId)</td>
-                    <td>@payment.Course?.Title (@payment.CourseId)</td>
-                    <td>@payment.Amount</td>
-                    <td>@payment.Currency</td>
-                    <td>@payment.Status</td>
-                    <td>@payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>
-                        <!-- View button -->
-                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPayment-@payment.Id">
-                            👁 View
-                        </button>
+            <tr>
+                <td>@p.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@p.Course?.Title</td>
+                <td>@p.User?.FirstName @p.User?.LastName</td>
 
-                        <form asp-action="DeletePayment" asp-controller="Administrator" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@payment.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                <td>
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#r-@p.Id">
+                        Review check
+                    </button>
 
-                <!-- Modal with Bootstrap Card -->
-                <div class="modal fade" id="viewPayment-@payment.Id" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-md">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Payment #@payment.Id</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Course: @payment.Course?.Title</h5>
-                                        <p class="card-text">User: @payment.User?.FirstName @payment.User?.LastName</p>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">User Id: @payment.UserId</li>
-                                            <li class="list-group-item">Course Id: @payment.CourseId</li>
-                                            <li class="list-group-item">Amount: @payment.Amount</li>
-                                            <li class="list-group-item">Currency: @payment.Currency</li>
-                                            <li class="list-group-item">Status: @payment.Status</li>
-                                            <li class="list-group-item">Created At: @payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
-                                        </ul>
-                                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="r-@p.Id">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5>Check</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <div class="modal-body">
+                                    <img class="img-fluid" src="@p.ReceiptImagePath" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </td>
+
+                <td>
+                    @(p.IsApproved == null ? "Waits" : p.IsApproved == true ? "Approved" : "Rejected")
+                    @if (p.RejectReason != null)
+                    {
+                            <div class="text-danger small">@p.RejectReason</div>
+                    }
+                </td>
+
+                <td>
+                    @if(p.IsApproved == null) {
+                        <form method="post" asp-action="ApprovePayment" asp-route-id="@p.Id" class="d-inline" form-payments>
+                            <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
+
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rej-@p.Id">
+                            Reject
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="rej-@p.Id">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" asp-action="RejectPayment" form-payments>
+                                        <div class="modal-header">
+                                                <h5>The reason for the rejection</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="paymentId" value="@p.Id" />
+                                            <textarea name="reason" class="form-control" required></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button class="btn btn-danger" type="submit">Reject</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
         }
     </tbody>
 </table>

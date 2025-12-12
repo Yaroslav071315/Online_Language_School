@@ -12,7 +12,6 @@ namespace Online_Language_School.Models
 
         public string Description { get; set; }
         public int OrderNumber { get; set; }
-        public DateTime? ScheduledDate { get; set; }
         public int DurationMinutes { get; set; }
 
         // Foreign Key

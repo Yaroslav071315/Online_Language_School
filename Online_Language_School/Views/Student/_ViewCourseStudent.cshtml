@@ -1,0 +1,196 @@
+﻿@model Online_Language_School.Models.Course
+@using Online_Language_School.Models
+
+<div class="modal fade" id="viewCourseStudent-@Model.Id" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">@Model.Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- COURSE HEADER -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm" />
+                    </div>
+                    <div class="col-md-8">
+                        <p><strong>Teacher:</strong> @($"{Model.Teacher?.FirstName} {Model.Teacher?.LastName}")</p>
+                        <p><strong>Language:</strong> @Model.Language</p>
+                        <p><strong>Level:</strong> @Model.Level</p>
+                        <p><strong>Price:</strong> @Model.Price.ToString("F2") ₴</p>
+                        <p><strong>Status:</strong> @Model.Status</p>
+                        <p><strong>Description:</strong></p>
+                        <div class="border rounded p-2">@Model.Description</div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- LESSONS / MATERIALS / TESTS -->
+                <h5>Lessons</h5>
+
+                @if (Model.Lessons != null && Model.Lessons.Any())
+                {
+                    foreach (var lesson in Model.Lessons.OrderBy(l => l.OrderNumber))
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <strong>@lesson.OrderNumber. @lesson.Title</strong>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="text-muted">@lesson.Description</p>
+
+                                <!-- MATERIALS -->
+                                <h6>Materials</h6>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Access</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (lesson.LessonMaterials != null && lesson.LessonMaterials.Any())
+                                        {
+                                            foreach (var m in lesson.LessonMaterials)
+                                            {
+                                                <tr>
+                                                    <td>@m.Title</td>
+                                                    <td>@m.FileType</td>
+                                                    <td>
+                                                        @if (Model.Status == CourseStatus.Active)
+                                                        {
+                                                            <a href="@m.FileUrl" target="_blank"
+                                                                    class="btn btn-sm btn-primary">
+                                                                Open
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-secondary">Locked</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-muted">No materials</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <!-- TESTS -->
+                                <h6>Tests</h6>
+                                <ul class="list-group">
+                                    @if (lesson.Tests != null && lesson.Tests.Any())
+                                    {
+                                        foreach (var t in lesson.Tests)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>@t.Title</span>
+                                                @if (Model.Status == CourseStatus.Active)
+                                                {
+                                                    <span class="badge bg-success">Available</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Locked</span>
+                                                }
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="list-group-item text-muted">No tests</li>
+                                    }
+                                </ul>
+
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No lessons in this course.</p>
+                }
+            </div>
+
+            <!-- FOOTER: BUTTONS LOGIC -->
+            <div class="modal-footer">
+                @{
+                    var studentId = Context.Session.GetString("UserId");
+
+                    var enrollment = Model.Enrollments?
+                        .FirstOrDefault(e => e.StudentId == studentId);
+
+                    bool isEnrolled = enrollment != null;
+                    int seatsTaken = Model.Enrollments?.Count() ?? 0;
+                    bool seatsAvailable = seatsTaken < Model.MaxStudents;
+                }
+
+                <!-- ENROLLMENT OPEN -->
+                @if (Model.Status == CourseStatus.Enrollment)
+                {
+                    @if (!isEnrolled && seatsAvailable)
+                    {
+                        <a class="btn btn-primary"
+                                href="https://external-payment.example.com/pay?amount=@Model.Price&courseId=@Model.Id"
+                                target="_blank">
+                            Pay & Enroll
+                        </a>
+
+                        <button class="btn btn-outline-secondary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#uploadReceiptModal-@Model.Id">
+                            Upload Receipt
+                        </button>
+                    }
+                    else if (!isEnrolled && !seatsAvailable)
+                    {
+                        <span class="badge bg-secondary">No seats available</span>
+                    }
+                    else if (isEnrolled)
+                    {
+                        <form asp-action="CancelEnrollment"
+                                asp-controller="Student"
+                                method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="courseId" value="@Model.Id" />
+                            <button class="btn btn-danger">
+                                Cancel & Refund (Auto)
+                            </button>
+                        </form>
+                    }
+                }
+                else if (Model.Status == CourseStatus.Active && isEnrolled)
+                {
+                    <button class="btn btn-warning"
+                            data-bs-toggle="modal"
+                            data-bs-target="#refundModal-@Model.Id">
+                        Request Refund
+                    </button>
+                }
+                else if (!isEnrolled)
+                {
+                    <span class="text-muted">Enrollment closed</span>
+                }
+
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_UploadReceiptModal", Model)
+@await Html.PartialAsync("_RefundRequestModal", Model)

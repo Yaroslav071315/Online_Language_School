@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Online_Language_School.Models.ApplicationUser>
+
+<h4>Student enrollments</h4>
+
+<table class="table table-hover">
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.FirstName @s.LastName</td>
+                <td>
+                    <a href="/Administrator/EnrollmentHistory/@s.Id"
+                       onclick="loadTabContent('enrollmentsContent', this.href); return false;"
+                       class="btn btn-primary btn-sm">Review</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+document.getElementById("searchStud").addEventListener("input", function() {
+    const term = this.value.toLowerCase();
+    document.querySelectorAll("table tbody tr").forEach(tr => {
+        tr.style.display = tr.innerText.toLowerCase().includes(term) ? "" : "none";
+    });
+});
+</script>

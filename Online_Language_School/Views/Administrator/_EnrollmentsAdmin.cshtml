@@ -84,7 +84,7 @@
                     <td>@e.Student?.FirstName @e.Student?.LastName (@e.StudentId)</td>
                     <td>@e.Course?.Title (@e.CourseId)</td>
                     <td>@e.Status</td>
-                    <td>@e.PaidAmount</td>
+                    <td>@e.PaidAmount.ToString("F2")</td>
                     <td>@e.EnrollmentDate.ToString("yyyy-MM-dd")</td>
                     <td>@(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</td>
                     <td>@(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
@@ -116,7 +116,7 @@
                                         <p class="card-text">Student: @e.Student?.FirstName @e.Student?.LastName</p>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">Status: @e.Status</li>
-                                            <li class="list-group-item">Paid Amount: @e.PaidAmount</li>
+                                            <li class="list-group-item">Paid Amount: @e.PaidAmount.ToString("F2")</li>
                                             <li class="list-group-item">Enrollment Date: @e.EnrollmentDate.ToString("yyyy-MM-dd")</li>
                                             <li class="list-group-item">Start Date: @(e.StartDate?.ToString("yyyy-MM-dd") ?? "-")</li>
                                             <li class="list-group-item">End Date: @(e.EndDate?.ToString("yyyy-MM-dd") ?? "-")</li>

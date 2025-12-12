@@ -1,27 +1,35 @@
-﻿@using Online_Language_School.ViewModels
+﻿@model Online_Language_School.ViewModels.CourseSearchViewModel
 @using Online_Language_School.Models
-@model CourseSearchViewModel
 
 <div class="card mb-3 p-3 bg-light">
-    <form method="get" asp-action="Courses" asp-controller="Student" id="courseSearchForm">
+    <form method="get" asp-action="Courses" asp-controller="Student" search-courses>
         <div class="row g-2">
             <div class="col-md-2">
-                <input type="number" name="MaxStudents" value="@Model.MaxStudents" class="form-control" placeholder="Max Students" />
+                <input name="Title" value="@Model.Title" class="form-control" placeholder="Title" />
             </div>
             <div class="col-md-2">
-                <input type="text" name="Level" value="@Model.Level" class="form-control" placeholder="Level" />
+                <input name="Format" value="@Model.Format" class="form-control" placeholder="Format" />
             </div>
             <div class="col-md-2">
-                <input type="text" name="Language" value="@Model.Language" class="form-control" placeholder="Language" />
+                <input name="Language" value="@Model.Language" class="form-control" placeholder="Language" />
             </div>
             <div class="col-md-2">
-                <input type="number" step="0.01" name="Price" value="@Model.Price" class="form-control" placeholder="Max Price" />
+                <input name="Level" value="@Model.Level" class="form-control" placeholder="Level" />
             </div>
-            <div class="col-md-2">
-                <input type="text" name="Format" value="@Model.Format" class="form-control" placeholder="Format" />
+            <div class="col-md-1">
+                <input type="number" name="MinPrice" value="@Model.MinPrice" class="form-control" placeholder="Min price" />
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">🔍 Search</button>
+            <div class="col-md-1">
+                <input type="number" name="MaxPrice" value="@Model.MaxPrice" class="form-control" placeholder="Max price" />
+            </div>
+            <div class="col-md-1">
+                <input type="number" name="MinStudents" value="@Model.MinStudents" class="form-control" placeholder="Min students" />
+            </div>
+            <div class="col-md-1">
+                <input type="number" name="MaxStudents" value="@Model.MaxStudents" class="form-control" placeholder="Max students" />
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-primary w-100">🔍</button>
             </div>
         </div>
     </form>
@@ -29,29 +37,54 @@
 
 @if (Model.Courses.Any())
 {
-        <div class="row">
+    <div class="row">
         @foreach (var course in Model.Courses)
         {
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 shadow-sm">
-                            <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" />
-                            <div class="card-body">
-                                <h5 class="card-title">@course.Title</h5>
-                                <p class="card-text">@course.Description</p>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">📖 Language: @course.Language</li>
-                                    <li class="list-group-item">🎯 Level: @course.Level</li>
-                                    <li class="list-group-item">👥 Max Students: @course.MaxStudents</li>
-                                    <li class="list-group-item">💳 Price: @course.Price ₴</li>
-                                    <li class="list-group-item">🖥 Format: @course.Format</li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm course-card"
+                        style="cursor:pointer"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewCourseStudent-@course.Id">
+
+                    <img src="@course.ImageUrl" class="card-img-top"
+                            alt="@course.Title"
+                            style="height:200px; object-fit:cover;" />
+
+                    <div class="card-body">
+                        <h5 class="card-title">@course.Title</h5>
+                        <p class="card-text text-muted" style="max-height: 70px; overflow:hidden;">
+                            @course.Description
+                        </p>
+
+                        <ul class="list-group list-group-flush mb-2">
+                            <li class="list-group-item">📖 @course.Language</li>
+                            <li class="list-group-item">🎯 @course.Level</li>
+                            <li class="list-group-item">👥 Max: @course.MaxStudents</li>
+                            <li class="list-group-item">💳 @course.Price.ToString("F2") ₴</li>
+                            <li class="list-group-item">🖥 @course.Format</li>
+                        </ul>
+
+                        @if (course.Status == CourseStatus.Active)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else if (course.Status == CourseStatus.Enrollment)
+                        {
+                            <span class="badge bg-primary">Enrollment</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@course.Status</span>
+                        }
                     </div>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_ViewCourseStudent", course)
         }
-        </div>
+    </div>
 }
 else
 {
-        <p class="text-muted">❌ No courses found for selected filters.</p>
+        <p class="text-muted text-center">❌ No courses found.</p>
 }

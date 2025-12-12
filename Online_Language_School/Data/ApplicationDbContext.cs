@@ -15,6 +15,7 @@ namespace Online_Language_School.Data
         public DbSet<BlogPost> News { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<PlannedLesson> PlannedLessons { get; set; }
         public DbSet<LessonMaterial> LessonMaterials { get; set; }
 
         // Тестування
@@ -27,6 +28,7 @@ namespace Online_Language_School.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<CourseReview> CourseReviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<RefundRequest> RefundRequests { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -38,13 +40,6 @@ namespace Online_Language_School.Data
                 .HasOne(b => b.Admin)
                 .WithMany(u => u.BlogPosts)
                 .HasForeignKey(b => b.AdminId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Course → Administrator
-            builder.Entity<Course>()
-                .HasOne(c => c.Administrator)
-                .WithMany()
-                .HasForeignKey(c => c.AdministratorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Course → Lessons

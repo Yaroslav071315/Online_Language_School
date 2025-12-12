@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Language_School.Data;
 
@@ -11,9 +12,11 @@ using Online_Language_School.Data;
 namespace Online_Language_School.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129162851_CourseChanges")]
+    partial class CourseChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -367,9 +370,6 @@ namespace Online_Language_School.Migrations
                     b.Property<int?>("MaxStudents")
                         .HasColumnType("int");
 
-                    b.Property<int>("PreviousStatus")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -487,6 +487,9 @@ namespace Online_Language_School.Migrations
                     b.Property<int>("OrderNumber")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("ScheduledDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -563,16 +566,7 @@ namespace Online_Language_School.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("PaymentMethod")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ReceiptImagePath")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("RejectReason")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Status")
@@ -593,35 +587,6 @@ namespace Online_Language_School.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("Online_Language_School.Models.PlannedLesson", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("PlannedLessons");
                 });
 
             modelBuilder.Entity("Online_Language_School.Models.Question", b =>
@@ -729,34 +694,6 @@ namespace Online_Language_School.Migrations
                     b.HasIndex("TestId");
 
                     b.ToTable("TestResults");
-                });
-
-            modelBuilder.Entity("RefundRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EnrollmentId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ReasonText")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("RejectReason")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EnrollmentId");
-
-                    b.ToTable("RefundRequests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -941,23 +878,6 @@ namespace Online_Language_School.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Online_Language_School.Models.PlannedLesson", b =>
-                {
-                    b.HasOne("Online_Language_School.Models.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Online_Language_School.Models.ApplicationUser", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId");
-
-                    b.Navigation("Lesson");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("Online_Language_School.Models.Question", b =>
                 {
                     b.HasOne("Online_Language_School.Models.Test", "Test")
@@ -997,17 +917,6 @@ namespace Online_Language_School.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Test");
-                });
-
-            modelBuilder.Entity("RefundRequest", b =>
-                {
-                    b.HasOne("Online_Language_School.Models.Enrollment", "Enrollment")
-                        .WithMany()
-                        .HasForeignKey("EnrollmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Enrollment");
                 });
 
             modelBuilder.Entity("Online_Language_School.Models.ApplicationUser", b =>

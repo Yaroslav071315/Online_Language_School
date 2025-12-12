@@ -1,0 +1,109 @@
+﻿@model Course
+@using Online_Language_School.Models
+
+<div class="modal fade" id="viewCourseModal-@(Model.Id)" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Model.Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" style="width: 30%; display: block;"/>
+                    <strong>Teacher:</strong> @($"{Model.Teacher?.FirstName} {Model.Teacher?.LastName}") <br />
+                    <strong>Price:</strong> @Model.Price.ToString("F2") <br />
+                    <strong>Language:</strong> @Model.Language <br />
+                    <strong>Level:</strong> @Model.Level <br />
+                    <strong>Status:</strong> @Model.Status <br />
+                    <strong>Description:</strong>
+                    <div class="border rounded p-2 mt-1">@Model.Description</div>
+                </div>
+
+                <hr />
+
+                <h5>Lessons</h5>
+
+                @if (Model.Lessons != null && Model.Lessons.Any())
+                {
+                    foreach (var lesson in Model.Lessons.OrderBy(l => l.OrderNumber))
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <strong>@lesson.OrderNumber. @lesson.Title</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2 text-muted">
+                                    @lesson.Description
+                                </div>
+                                <h6>Materials</h6>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Type</th>
+                                            <th>Link</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (lesson.LessonMaterials != null && lesson.LessonMaterials.Any())
+                                        {
+                                            foreach (var m in lesson.LessonMaterials)
+                                            {
+                                                <tr>
+                                                    <td>@m.Title</td>
+                                                    <td>@m.FileType</td>
+                                                    <td>
+                                                        <a href="@m.FileUrl" target="_blank">Open</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-muted">No materials</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <h6 class="mt-3">Tests</h6>
+                                    <ul class="list-group">
+                                        @if (lesson.Tests != null && lesson.Tests.Any())
+                                        {
+                                            foreach (var t in lesson.Tests)
+                                            {
+                                                <li class="list-group-item">
+                                                    <strong>@t.Title</strong>
+                                                    <div class="text-muted small">
+                                                        @t.Description
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="list-group-item text-muted">
+                                                No tests
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted">No lessons in this course</div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

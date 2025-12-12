@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Online_Language_School.Models.Lesson>
+﻿@model IEnumerable<Online_Language_School.Models.PlannedLesson>
 
 <h4 class="mb-3">📚 My Classes</h4>
 
@@ -11,77 +11,85 @@
             <th>Description</th>
             <th>Duration</th>
             <th>Order</th>
-            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model != null && Model.Any())
-        {
-            foreach (var lesson in Model)
-            {
-                        <tr>
-                            <td>@(lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
-                            <td>@lesson.Course?.Title</td>
-                            <td>@lesson.Title</td>
-                            <td>@lesson.Description</td>
-                            <td>@lesson.DurationMinutes min</td>
-                            <td>@lesson.OrderNumber</td>
-                            <td>
-                        @(lesson.ScheduledDate.HasValue && lesson.ScheduledDate.Value > DateTime.Now
-                                ? "Planned"
-                                : "Completed")
-                            </td>
-                            <td>
-                                <!-- View button -->
-                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewLesson-@lesson.Id">
-                                    👁 View
-                                </button>
-                            </td>
-                        </tr>
 
-                        <!-- Modal with Bootstrap Card -->
-                        <div class="modal fade" id="viewLesson-@lesson.Id" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-md">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">@lesson.Title</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Course: @lesson.Course?.Title</h5>
-                                                <p class="card-text">@lesson.Description</p>
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Scheduled: @(lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</li>
-                                                    <li class="list-group-item">Duration: @lesson.DurationMinutes min</li>
-                                                    <li class="list-group-item">Order: @lesson.OrderNumber</li>
-                                                    <li class="list-group-item">Status: @(lesson.ScheduledDate.HasValue && lesson.ScheduledDate.Value > DateTime.Now ? "Planned" : "Completed")</li>
-                                                    <li class="list-group-item">Lesson Id: @lesson.Id</li>
-                                                    <li class="list-group-item">Course Id: @lesson.CourseId</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
+@if (Model != null && Model.Any())
+{
+    foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+            <td>@p.Lesson.Course.Title</td>
+            <td>@p.Lesson.Title</td>
+            <td>@p.Lesson.Description</td>
+            <td>@p.Lesson.DurationMinutes min</td>
+            <td>@p.Lesson.OrderNumber</td>
+
+            <td>
+                <button type="button"
+                        class="btn btn-sm btn-info"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewLesson-@p.Id">
+                    👁 View
+                </button>
+            </td>
+        </tr>
+
+        <!-- MODAL -->
+        <div class="modal fade" id="viewLesson-@p.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">@p.Lesson.Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h5 class="card-title">Course: @p.Lesson.Course.Title</h5>
+                                <p class="card-text">@p.Lesson.Description</p>
+
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Scheduled: @p.StartTime.ToString("yyyy-MM-dd HH:mm")</li>
+                                    <li class="list-group-item">Duration: @p.Lesson.DurationMinutes min</li>
+                                    <li class="list-group-item">Order: @p.Lesson.OrderNumber</li>
+                                    <li class="list-group-item">Lesson Id: @p.LessonId</li>
+                                    <li class="list-group-item">Planned Id: @p.Id</li>
+                                    <li class="list-group-item">Course Id: @p.Lesson.CourseId</li>
+                                </ul>
+
                             </div>
                         </div>
-            }
-        }
-        else
-        {
-                <tr>
-                    <td colspan="8" class="text-center text-muted">No lessons available</td>
-                </tr>
-        }
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7" class="text-center text-muted">No classes planned</td>
+    </tr>
+}
+
     </tbody>
 </table>
 
+
 <h4 class="mb-3">📅 Calendar</h4>
+
 <div class="border p-3 text-center">
     <table class="table table-bordered text-center">
         <thead>
@@ -95,41 +103,51 @@
                 <th>Sun</th>
             </tr>
         </thead>
+
         <tbody>
             @{
-                var lessons = Model?.ToList() ?? new List<Online_Language_School.Models.Lesson>();
+                var list = Model?.ToList() ?? new List<Online_Language_School.Models.PlannedLesson>();
+
                 var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 var daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                 var currentDay = 1;
+
                 var firstDayOfWeek = (int)startOfMonth.DayOfWeek;
                 if (firstDayOfWeek == 0) firstDayOfWeek = 7;
 
                 for (int row = 0; row < 6; row++)
                 {
-                            <tr>
+                    <tr>
                         @for (int col = 1; col <= 7; col++)
                         {
                             if ((row == 0 && col < firstDayOfWeek) || currentDay > daysInMonth)
                             {
-                                                <td></td>
+                                <td></td>
                             }
                             else
                             {
                                 var date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, currentDay);
-                                bool hasLesson = lessons.Any(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value.Date == date.Date);
-                                                <td class="@(hasLesson ? "bg-success text-white" : "")">@currentDay</td>
-                                ;
+
+                                bool hasLesson = list.Any(x => x.StartTime.Date == date.Date);
+
+                                <td class="@(hasLesson ? "bg-success text-white" : "")">
+                                    @currentDay
+                                </td>
+
                                 currentDay++;
                             }
                         }
-                            </tr>
+                    </tr>
                 }
             }
         </tbody>
     </table>
 </div>
 
+
+
 <h4 class="mb-3">📌 Upcoming Classes</h4>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -139,27 +157,28 @@
             <th>Status</th>
         </tr>
     </thead>
+
     <tbody>
-        @if (Model != null && Model.Any(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value > DateTime.Now))
+        @if (Model != null && Model.Any(p => p.StartTime > DateTime.Now && p.StartTime.AddMinutes(p.DurationMinutes) < DateTime.Now))
         {
-            foreach (var lesson in Model
-                .Where(l => l.ScheduledDate.HasValue && l.ScheduledDate.Value > DateTime.Now)
-                .OrderBy(l => l.ScheduledDate)
+            foreach (var p in Model
+                .Where(p => p.StartTime > DateTime.Now && p.StartTime.AddMinutes(p.DurationMinutes) < DateTime.Now)
+                .OrderBy(p => p.StartTime)
                 .Take(5))
             {
-                        <tr>
-                            <td>@lesson.ScheduledDate?.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>@lesson.Course?.Title</td>
-                            <td>@lesson.Title</td>
-                            <td>Planned</td>
-                        </tr>
+                <tr>
+                    <td>@p.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@p.Lesson.Course.Title</td>
+                    <td>@p.Lesson.Title</td>
+                    <td>Planned</td>
+                </tr>
             }
         }
         else
         {
-                <tr>
-                    <td colspan="4" class="text-center text-muted">No upcoming classes</td>
-                </tr>
+            <tr>
+                <td colspan="4" class="text-center text-muted">No upcoming classes</td>
+            </tr>
         }
     </tbody>
 </table>

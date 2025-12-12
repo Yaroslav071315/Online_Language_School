@@ -26,7 +26,7 @@ namespace Online_Language_School.Controllers
             var model = new AdminOfficeViewModel
             {
                 Users = _context.Users.ToList(),
-                Courses = _context.Courses.Include(c => c.Administrator).ToList(),
+                Courses = _context.Courses.ToList(),
                 News = _context.News.Include(n => n.Admin).ToList(),
                 Payments = _context.Payments
                     .Include(p => p.User)
@@ -92,112 +92,6 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office"); // твій метод/в'ю для списку користувачів
         }
 
-        // POST: /Administrator/CreateCourse
-        [HttpPost]
-        public IActionResult CreateCourse(
-            string title,
-            string description,
-            decimal price,
-            string language,
-            string level,
-            string format,
-            int? maxStudents,
-            string imageUrl,
-            string administratorId,
-            string teacherId)
-        {
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description) ||
-                string.IsNullOrWhiteSpace(language) || string.IsNullOrWhiteSpace(level) ||
-                string.IsNullOrWhiteSpace(format) || string.IsNullOrWhiteSpace(administratorId) ||
-                string.IsNullOrWhiteSpace(teacherId))
-            {
-                TempData["Errors"] = "All required fields must be filled.";
-                return RedirectToAction("Office");
-            }
-
-            if (_context.Courses.Any(c => c.Title == title && c.Language == language && c.Level == level))
-            {
-                TempData["Errors"] = "Course with the same Title, Language and Level already exists.";
-                return RedirectToAction("Office");
-            }
-
-            var course = new Course
-            {
-                Title = title,
-                Description = description,
-                Price = price,
-                Language = language,
-                Level = level,
-                Format = format,
-                MaxStudents = maxStudents,
-                ImageUrl = imageUrl,
-                AdministratorId = administratorId,
-                TeacherId = teacherId,
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
-
-            _context.Courses.Add(course);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
-        // POST: /Administrator/EditCourse
-        [HttpPost]
-        public IActionResult EditCourse(
-            int id,
-            string title,
-            string description,
-            decimal price,
-            string language,
-            string level,
-            string format,
-            int? maxStudents,
-            string imageUrl,
-            string administratorId,
-            string teacherId)
-        {
-            if (id <= 0)
-            {
-                TempData["Errors"] = "Invalid course Id.";
-                return RedirectToAction("Office");
-            }
-
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(description) ||
-                string.IsNullOrWhiteSpace(language) || string.IsNullOrWhiteSpace(level) ||
-                string.IsNullOrWhiteSpace(format) || string.IsNullOrWhiteSpace(administratorId) ||
-                string.IsNullOrWhiteSpace(teacherId))
-            {
-                TempData["Errors"] = "All required fields must be filled.";
-                return RedirectToAction("Office");
-            }
-
-            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
-            if (course == null)
-            {
-                TempData["Errors"] = "Course not found.";
-                return RedirectToAction("Office");
-            }
-
-            // Оновлюємо дані
-            course.Title = title;
-            course.Description = description;
-            course.Price = price;
-            course.Language = language;
-            course.Level = level;
-            course.Format = format;
-            course.MaxStudents = maxStudents;
-            course.ImageUrl = imageUrl;
-            course.AdministratorId = administratorId;
-            course.TeacherId = teacherId;
-
-            _context.Courses.Update(course);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
         // POST: /Administrator/DeleteCourse
         [HttpPost]
         public IActionResult DeleteCourse(int id)
@@ -211,71 +105,7 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
-        // POST: /Administrator/ToggleCourseActive
-        [HttpPost]
-        public IActionResult ToggleCourseActive(int id)
-        {
-            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
-            if (course != null)
-            {
-                course.IsActive = !course.IsActive;
-                _context.SaveChanges();
-            }
-            return RedirectToAction("Office");
-        }
-
         // ====== НОВИНИ ======
-
-
-        // POST: /Administrator/CreatePayment
-        [HttpPost]
-        public IActionResult CreatePayment(string userId, int courseId, decimal amount, string currency, string status, DateTime createdAt)
-        {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(currency) || string.IsNullOrWhiteSpace(status))
-            {
-                TempData["Errors"] = "All required fields must be filled.";
-                return RedirectToAction("Office");
-            }
-
-            var payment = new Payment
-            {
-                UserId = userId,
-                CourseId = courseId,
-                Amount = amount,
-                Currency = currency,
-                Status = status,
-                CreatedAt = createdAt
-            };
-
-            _context.Payments.Add(payment);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
-        // POST: /Administrator/EditPayment
-        [HttpPost]
-        public IActionResult EditPayment(int id, string userId, int courseId, decimal amount, string currency, string status, DateTime createdAt)
-        {
-            var payment = _context.Payments.FirstOrDefault(p => p.Id == id);
-            if (payment == null)
-            {
-                TempData["Errors"] = "Payment not found.";
-                return RedirectToAction("Office");
-            }
-
-            payment.UserId = userId;
-            payment.CourseId = courseId;
-            payment.Amount = amount;
-            payment.Currency = currency;
-            payment.Status = status;
-            payment.CreatedAt = createdAt;
-
-            _context.Payments.Update(payment);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
 
         // POST: /Administrator/DeletePayment
         [HttpPost]
@@ -371,125 +201,6 @@ namespace Online_Language_School.Controllers
             return RedirectToAction("Office");
         }
 
-
-        [HttpGet]
-        public IActionResult Chat()
-        {
-            var adminId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(adminId))
-            {
-                TempData["Errors"] = "Not logged in.";
-                return RedirectToAction("Login", "Account");
-            }
-
-            var messages = _context.ChatMessages
-                .Include(m => m.Sender)
-                .Include(m => m.Receiver)
-                .Where(m => m.SenderId == adminId || m.ReceiverId == adminId)
-                .OrderByDescending(m => m.SentAt)
-                .ToList();
-
-
-
-            return View(messages);
-        }
-
-
-
-        [HttpPost]
-        public IActionResult SendMessage(string receiverId, string content)
-        {
-            var adminId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(adminId))
-            {
-                TempData["Errors"] = "Not logged in.";
-                return RedirectToAction("Login", "Account");
-            }
-
-            if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(receiverId))
-            {
-                TempData["Errors"] = "Message and Receiver are required.";
-                return RedirectToAction("Office");
-            }
-
-            var msg = new ChatMessage
-            {
-                Content = content,
-                SentAt = DateTime.UtcNow,
-                SenderId = adminId,
-                ReceiverId = receiverId
-            };
-
-            _context.ChatMessages.Add(msg);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
-        // POST: /Administrator/CreateEnrollment
-        [HttpPost]
-        public IActionResult CreateEnrollment(string studentId, int courseId, string status, decimal paidAmount, DateTime? startDate, DateTime? endDate)
-        {
-            if (string.IsNullOrWhiteSpace(studentId) || string.IsNullOrWhiteSpace(status))
-            {
-                TempData["Errors"] = "StudentId and Status are required.";
-                return RedirectToAction("Office");
-            }
-
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                Status = status,
-                PaidAmount = paidAmount,
-                StartDate = startDate,
-                EndDate = endDate,
-                EnrollmentDate = DateTime.UtcNow
-            };
-
-            _context.Enrollments.Add(enrollment);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
-        // POST: /Administrator/EditEnrollment
-        [HttpPost]
-        public IActionResult EditEnrollment(int id, string studentId, int courseId, string status, decimal paidAmount, DateTime? startDate, DateTime? endDate)
-        {
-            var enrollment = _context.Enrollments.FirstOrDefault(e => e.Id == id);
-            if (enrollment == null)
-            {
-                TempData["Errors"] = "Enrollment not found.";
-                return RedirectToAction("Office");
-            }
-
-            enrollment.StudentId = studentId;
-            enrollment.CourseId = courseId;
-            enrollment.Status = status;
-            enrollment.PaidAmount = paidAmount;
-            enrollment.StartDate = startDate;
-            enrollment.EndDate = endDate;
-
-            _context.Enrollments.Update(enrollment);
-            _context.SaveChanges();
-
-            return RedirectToAction("Office");
-        }
-
-        // POST: /Administrator/DeleteEnrollment
-        [HttpPost]
-        public IActionResult DeleteEnrollment(int id)
-        {
-            var enrollment = _context.Enrollments.FirstOrDefault(e => e.Id == id);
-            if (enrollment != null)
-            {
-                _context.Enrollments.Remove(enrollment);
-                _context.SaveChanges();
-            }
-            return RedirectToAction("Office");
-        }
-
         // GET: /Administrator/Users
         [HttpGet]
         public async Task<IActionResult> Users()
@@ -500,13 +211,145 @@ namespace Online_Language_School.Controllers
 
         // GET: /Administrator/Courses
         [HttpGet]
-        public async Task<IActionResult> Courses()
+        public async Task<IActionResult> Courses(CourseFilterViewModel filter)
         {
-            var courses = await _context.Courses
+            var query = _context.Courses
                 .Include(c => c.Teacher)
-                .ToListAsync();
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonMaterials)
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.Tests)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter.Title))
+                query = query.Where(c => c.Title.Contains(filter.Title));
+            if (!string.IsNullOrWhiteSpace(filter.Format))
+                query = query.Where(c => c.Format == filter.Format);
+            if (filter.MinPrice.HasValue)
+                query = query.Where(c => c.Price >= filter.MinPrice);
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(c => c.Price <= filter.MaxPrice);
+            if (filter.MinStudents.HasValue)
+                query = query.Where(c => c.MaxStudents >= filter.MinStudents);
+            if (filter.MaxStudents.HasValue)
+                query = query.Where(c => c.MaxStudents <= filter.MaxStudents);
+            if (!string.IsNullOrWhiteSpace(filter.Language))
+                query = query.Where(c => c.Language == filter.Language);
+            if (!string.IsNullOrWhiteSpace(filter.Level))
+                query = query.Where(c => c.Level == filter.Level);
+            if (filter.OnlySubmitted)
+                query = query.Where(c => c.Status == CourseStatus.Submitted);
+            else if (filter.Status.HasValue)
+                query = query.Where(c => c.Status == filter.Status);
+
+            var courses = await query.ToListAsync();
             return PartialView("_CoursesAdmin", courses);
         }
+
+        [HttpGet]
+        public IActionResult ViewCourse(int id)
+        {
+            var course = _context.Courses
+                .Include(c => c.Teacher)
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.LessonMaterials)
+                .Include(c => c.Lessons)
+                    .ThenInclude(l => l.Tests)
+                .FirstOrDefault(c => c.Id == id);
+
+            if (course == null) return NotFound();
+
+            return PartialView("_ViewCourseAdmin", course);
+        }
+
+        [HttpPost]
+        public IActionResult ApproveCourse(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null) return NotFound();
+
+            course.Status = CourseStatus.Approved;
+            _context.SaveChanges();
+
+            return RedirectToAction("Courses");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectCourse(RejectCourseViewModel model)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Teacher)
+                .FirstOrDefaultAsync(c => c.Id == model.CourseId);
+
+            if (course == null) return NotFound();
+
+            course.Status = CourseStatus.Draft;
+            await _context.SaveChangesAsync();
+
+            //if (!string.IsNullOrWhiteSpace(model.Reason))
+            //{
+            //    await _emailService.SendAsync(
+            //        course.Teacher.Email,
+            //        "Course rejected",
+            //        $"Your course \"{course.Title}\" was rejected.\nReason: {model.Reason}"
+            //    );
+            //}
+
+            if(!string.IsNullOrWhiteSpace(model.Reason))
+            {
+                var sender = await _userManager.GetUserAsync(User);
+                var receiverId = _context.Courses
+                    .FirstOrDefault(c => c.Id == model.CourseId)
+                    .TeacherId;
+                var receiver = _context.Users.FirstOrDefault(u => u.Id == receiverId);
+
+                var message = new ChatMessage()
+                {
+                    Content = $"Your course \"{course.Title}\" was rejected.\nReason: {model.Reason}",
+                    Sender = sender,
+                    Receiver = receiver
+                };
+
+                _context.ChatMessages.Add(message);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Courses");
+        }
+
+        [HttpPost]
+        public IActionResult FreezeCourse(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null) return NotFound();
+
+            if (course.Status == CourseStatus.Enrollment ||
+                course.Status == CourseStatus.Active ||
+                course.Status == CourseStatus.Approved)
+            {
+                course.PreviousStatus = course.Status;
+                course.Status = CourseStatus.Draft;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Courses");
+        }
+
+        [HttpPost]
+        public IActionResult StartCourse(int id)
+        {
+            var course = _context.Courses.FirstOrDefault(c => c.Id == id);
+            if (course == null) return NotFound();
+
+            if (course.Status == CourseStatus.Draft)
+            {
+                course.Status = course.PreviousStatus;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Courses");
+        }
+
 
         // GET: /Administrator/News
         [HttpGet]
@@ -521,24 +364,180 @@ namespace Online_Language_School.Controllers
 
         // GET: /Administrator/Payments
         [HttpGet]
-        public async Task<IActionResult> Payments()
+        public IActionResult Payments()
         {
-            var payments = await _context.Payments
+            var payments = _context.Payments
                 .Include(p => p.User)
-                .OrderByDescending(p => p.CompletedAt)
-                .ToListAsync();
+                .Include(p => p.Course)
+                .Where(p => p.ReceiptImagePath != null)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToList();
+
             return PartialView("_PaymentsAdmin", payments);
         }
 
-        // GET: /Administrator/Enrollments
-        [HttpGet]
-        public async Task<IActionResult> Enrollments()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApprovePayment(int id)
         {
-            var enrollments = await _context.Enrollments
-                .Include(e => e.Student)
-                .Include(e => e.Course)
+            var payment = await _context.Payments
+                .Include(p => p.Course)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (payment == null)
+            {
+                TempData["Errors"] = "Payment not found.";
+                var pending1 = await _context.Payments
+                    .Include(p => p.User)
+                    .Include(p => p.Course)
+                    .OrderBy(p => p.CreatedAt)
+                    .ToListAsync();
+                return PartialView("_PaymentsAdmin", pending1);
+            }
+
+            // Check capacity if MaxStudents specified
+            var course = payment.Course;
+            if (course.MaxStudents.HasValue)
+            {
+                var occupied = await _context.Enrollments
+                    .Where(e => e.CourseId == course.Id && e.Status != "Cancelled")
+                    .CountAsync();
+
+                if (occupied >= course.MaxStudents.Value)
+                {
+                    TempData["Errors"] = "Cannot approve: course is full.";
+                    var pending2 = await _context.Payments
+                        .Include(p => p.User)
+                        .Include(p => p.Course)
+                        .OrderBy(p => p.CreatedAt)
+                        .ToListAsync();
+                    return PartialView("_PaymentsAdmin", pending2);
+                }
+            }
+
+            // Mark payment as success
+            payment.Status = "Success";
+            payment.IsApproved = true;
+            payment.CompletedAt = DateTime.UtcNow;
+            _context.Payments.Update(payment);
+
+            // Create Enrollment (admin approved -> make Active)
+            var enrollment = new Enrollment
+            {
+                StudentId = payment.UserId,
+                CourseId = payment.CourseId,
+                Status = "Active",   // варіант: "Pending" якщо бажаєш ще додаткові кроки
+                PaidAmount = payment.Amount,
+                EnrollmentDate = DateTime.UtcNow,
+                StartDate = null,
+                EndDate = null
+            };
+
+            await _context.Enrollments.AddAsync(enrollment);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Payment #{payment.Id} approved. Enrollment created for user {payment.UserId}.";
+
+            var pending = await _context.Payments
+                .Include(p => p.User)
+                .Include(p => p.Course)
+                .OrderBy(p => p.CreatedAt)
                 .ToListAsync();
-            return PartialView("_EnrollmentsAdmin", enrollments);
+
+            return PartialView("_PaymentsAdmin", pending);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectPayment(int paymentId, string? reason)
+        {
+            var payment = await _context.Payments
+                .Include(p => p.User)
+                .Include(p => p.Course)
+                .FirstOrDefaultAsync(p => p.Id == paymentId);
+
+            if (payment == null)
+            {
+                TempData["Errors"] = "Payment not found.";
+                var pendingN = await _context.Payments
+                    .Include(p => p.User)
+                    .Include(p => p.Course)
+                    .OrderBy(p => p.CreatedAt)
+                    .ToListAsync();
+                return PartialView("_PaymentsAdmin", pendingN);
+            }
+
+            payment.Status = "Failed";
+            payment.CompletedAt = DateTime.UtcNow;
+            payment.RejectReason = reason;
+            payment.IsApproved = false;
+            _context.Payments.Update(payment);
+            await _context.SaveChangesAsync();
+
+            // TODO: optional — send notification/email to payment.UserId with reason
+
+            TempData["Success"] = $"Payment #{payment.Id} rejected.";
+            var pending = await _context.Payments
+                .Include(p => p.User)
+                .Include(p => p.Course)
+                .OrderBy(p => p.CreatedAt)
+                .ToListAsync();
+            return PartialView("_PaymentsAdmin", pending);
+        }
+
+
+        public IActionResult Enrollments()
+        {
+            var students = _context.Users
+                .Where(u => u.Enrollments.Any())
+                .ToList();
+
+            return PartialView("_EnrollmentStudents", students);
+        }
+
+        public IActionResult EnrollmentHistory(string id)
+        {
+            var enrolls = _context.Enrollments
+                .Include(e => e.Course)
+                .Where(e => e.StudentId == id)
+                .OrderByDescending(e => e.StartDate)
+                .ToList();
+
+            ViewBag.Student = _context.Users.Find(id);
+
+            return PartialView("_EnrollmentHistory", enrolls);
+        }
+
+        public IActionResult Refunds()
+        {
+            var requests = _context.RefundRequests
+                .Include(r => r.Enrollment)
+                .ThenInclude(e => e.Student)
+                .Include(r => r.Enrollment.Course)
+                .ToList();
+
+            return PartialView("_RefundsAdmin", requests);
+        }
+
+        [HttpPost]
+        public IActionResult ApproveRefund(int id)
+        {
+            var r = _context.RefundRequests.Find(id);
+            r.IsApproved = true;
+            _context.SaveChanges();
+            return RedirectToAction("Refunds");
+        }
+
+        [HttpPost]
+        public IActionResult RejectRefund(int id, string reason)
+        {
+            var r = _context.RefundRequests.Find(id);
+            r.IsApproved = false;
+            r.RejectReason = reason;
+            _context.SaveChanges();
+            return RedirectToAction("Refunds");
+        }
+
     }
 }

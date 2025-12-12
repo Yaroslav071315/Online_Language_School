@@ -2,6 +2,15 @@
 
 namespace Online_Language_School.Models
 {
+    public enum CourseStatus
+    {
+        Draft = 0,       // Чорновик
+        Submitted = 1,   // Відправлений на перевірку
+        Approved = 2,    // Затверджений адміном
+        Enrollment = 3, // Йде набір
+        Active = 4      // Навчання йде
+    }
+
     public class Course
     {
         [Key]
@@ -27,13 +36,9 @@ namespace Online_Language_School.Models
 
         public int? MaxStudents { get; set; }
         public string? ImageUrl { get; set; }
-        public bool IsActive { get; set; } = true;
+        public CourseStatus Status { get; set; } = CourseStatus.Draft;
+        public CourseStatus PreviousStatus { get; set; } = CourseStatus.Approved;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Адміністратор, який створив курс
-        [Required]
-        public string? AdministratorId { get; set; }
-        public virtual ApplicationUser Administrator { get; set; }
 
         // Викладач, який веде курс
         [Required]

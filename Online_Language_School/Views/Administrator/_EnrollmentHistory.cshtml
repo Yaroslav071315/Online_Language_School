@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Online_Language_School.Models.Enrollment>
+@{
+    var stud = ViewBag.Student as Online_Language_School.Models.ApplicationUser;
+}
+
+<h4>Enrollments history — @stud.FirstName @stud.LastName</h4>
+
+<a href="#" class="btn btn-secondary mb-3"
+   onclick="loadTabContent('enrollmentsContent', '/Administrator/Enrollments'); return false;">
+    ← Back
+</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Paid</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.Course.Title</td>
+                <td>@e.Status</td>
+                <td>@e.PaidAmount.ToString("F2")</td>
+            </tr>
+        }
+    </tbody>
+</table>

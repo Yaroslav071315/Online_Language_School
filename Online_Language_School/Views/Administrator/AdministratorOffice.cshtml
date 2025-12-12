@@ -17,6 +17,7 @@
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#news">News</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#payments">Payments</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#enrollments">Enrollments</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#refunds">Refunds</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#chat">Chat</a></li>
             </ul>
             <hr />
@@ -48,6 +49,9 @@
                     <button class="nav-link" id="enrollments-tab" data-bs-toggle="tab" data-bs-target="#enrollments" type="button">📝 Enrollments</button>
                 </li>
                 <li class="nav-item">
+                    <button class="nav-link" id="refunds-tab" data-bs-toggle="tab" data-bs-target="#refunds" type="button">💳 Refunds</button>
+                </li>
+                <li class="nav-item">
                     <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button">💬 Chat</button>
                 </li>
             </ul>
@@ -68,6 +72,9 @@
                 </div>
                 <div class="tab-pane fade" id="enrollments" role="tabpanel">
                     <div id="enrollmentsContent">Loading...</div>
+                </div>
+                <div class="tab-pane fade" id="refunds" role="tabpanel">
+                    <div id="refundsContent">Loading...</div>
                 </div>
                 <div class="tab-pane fade" id="chat" role="tabpanel">
                     <div id="chatContent">Loading...</div>
@@ -106,35 +113,68 @@
             document.getElementById("enrollments-tab").addEventListener("click", () => {
                 loadTabContent("enrollmentsContent", "/Administrator/Enrollments");
             });
+            document.getElementById("refunds-tab").addEventListener("click", () => {
+                loadTabContent("refundsContent", "/Administrator/Refunds");
+            });
             document.getElementById("chat-tab").addEventListener("click", () => {
                 loadTabContent("chatContent", "/Chat/Index");
             });
             document.addEventListener("click", function(e) {
-                const link = e.target.closest("a[data-chat]");
-                if (link) {
+                // якщо клік по accordion‑кнопці — нічого не робимо
+                if (e.target.closest(".accordion-button")) {
+                    return;
+                }
+
+                const chatLink = e.target.closest("a[data-chat]");
+                const materialsLink = e.target.closest("a[view-courses]");
+
+                if (chatLink) {
                     e.preventDefault();
-                    const url = link.getAttribute("href");
+                    const url = chatLink.getAttribute("href");
                     loadTabContent("chatContent", url);
+                }
+
+                if (materialsLink) {
+                    e.preventDefault();
+                    const url = materialsLink.getAttribute("href");
+                    loadTabContent("coursesContent", url);
                 }
             });
+
             document.addEventListener("submit", function(e) {
                 const form = e.target;
+                e.preventDefault();
+
+                const handleFetch = (contentId) => {
+                    const formData = new FormData(form);
+                    fetch(form.action, { method: "POST", body: formData })
+                        .then(res => res.text())
+                        .then(html => {
+                            document.getElementById(contentId).innerHTML = html;
+                            const modalEl = form.closest(".modal");
+                            if (modalEl) {
+                                const modal = bootstrap.Modal.getInstance(modalEl);
+                                if (modal) modal.hide();
+                                document.body.classList.remove("modal-open");
+                                document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+                            }
+                        });
+                };
+
                 if (form.id === "chatSearchForm") {
-                    e.preventDefault();
                     const url = form.action + "?" + new URLSearchParams(new FormData(form));
                     loadTabContent("chatContent", url);
-                }
-                if (form.id === "sendMessageForm") {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    fetch(form.action, {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById("chatContent").innerHTML = html;
-                    });
+                } else if (form.hasAttribute("courses-search")) {
+                    const url = form.action + "?" + new URLSearchParams(new FormData(form));
+                    loadTabContent("coursesContent", url);
+                } else if (form.id === "sendMessageForm") {
+                    handleFetch("chatContent");
+                } else if (form.hasAttribute("form-courses")) {
+                    handleFetch("coursesContent");
+                } else if (form.hasAttribute("form-payments")) {
+                    handleFetch("paymentsContent");
+                } else if (form.hasAttribute("form-refunds")) {
+                    handleFetch("refundsContent");
                 }
             });
         </script>

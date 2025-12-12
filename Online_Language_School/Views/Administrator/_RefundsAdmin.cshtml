@@ -1,0 +1,61 @@
+﻿@model IEnumerable<RefundRequest>
+
+<h4>Refund requests</h4>
+
+<table class="table table-bordered">
+<thead class="table-dark">
+<tr>
+    <th>Student</th>
+    <th>Course</th>
+    <th>Reason</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+</thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Enrollment.Student.FirstName @r.Enrollment.Student.LastName</td>
+                <td>@r.Enrollment.Course.Title</td>
+                <td>@r.ReasonText</td>
+                <td>
+                    @(r.IsApproved == null ? "Waiting" : r.IsApproved == true ? "Approved" : "Rejected")
+                    @if (r.RejectReason != null)
+                    {
+                    <div class="text-danger small">@r.RejectReason</div>
+                    }
+                </td>
+                <td>
+                    <form method="post" asp-action="ApproveRefund" asp-route-id="@r.Id" class="d-inline" form-refunds>
+                        <button class="btn btn-success btn-sm">Approve</button>
+                    </form>
+
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rr-@r.Id">
+                        Reject
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="rr-@r.Id">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" asp-action="RejectRefund" form-refunds>
+                                    <div class="modal-header">State the reason</div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="@r.Id" />
+                                        <textarea name="reason" class="form-control" required></textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button class="btn btn-danger" type="submit">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

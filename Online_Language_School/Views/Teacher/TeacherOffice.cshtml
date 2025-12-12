@@ -32,7 +32,7 @@
                     <button class="nav-link active" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button">📅 Schedule</button>
                 </li> 
                 <li class="nav-item">
-                    <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button">📂 Materials</button>
+                    <button class="nav-link" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button">📚 Courses</button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button">📝 Tests</button>
@@ -62,59 +62,87 @@
 </div>
 
 @section Scripts {
-        <script>
-            function loadTabContent(tabId, url) {
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById(tabId).innerHTML = html;
-                    });
+    <script>
+        function loadTabContent(tabId, url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById(tabId).innerHTML = html;
+                });
+        }
+
+        // Завантажуємо Schedule при старті
+        loadTabContent("scheduleContent", "/Teacher/Schedule");
+
+        // Підвантаження при кліку на вкладки
+        document.getElementById("schedule-tab").addEventListener("click", () => {
+            loadTabContent("scheduleContent", "/Teacher/Schedule");
+        });
+        document.getElementById("materials-tab").addEventListener("click", () => {
+            loadTabContent("materialsContent", "/Teacher/Courses");
+        });
+        document.getElementById("tests-tab").addEventListener("click", () => {
+            loadTabContent("testsContent", "/Teacher/Tests");
+        });
+        document.getElementById("chat-tab").addEventListener("click", () => {
+            loadTabContent("chatContent", "/Chat/Index");
+        });
+
+        document.addEventListener("click", function(e) {
+            // якщо клік по accordion‑кнопці — нічого не робимо
+            if (e.target.closest(".accordion-button")) {
+                return;
             }
 
-            // Завантажуємо Schedule при старті
-            loadTabContent("scheduleContent", "/Teacher/Schedule");
+            const chatLink = e.target.closest("a[data-chat]");
+            const materialsLink = e.target.closest("a[edit-materials]");
 
-            // Підвантаження при кліку на вкладки
-            document.getElementById("schedule-tab").addEventListener("click", () => {
-                loadTabContent("scheduleContent", "/Teacher/Schedule");
-            });
-            document.getElementById("materials-tab").addEventListener("click", () => {
-                loadTabContent("materialsContent", "/Teacher/Materials");
-            });
-            document.getElementById("tests-tab").addEventListener("click", () => {
-                loadTabContent("testsContent", "/Teacher/Tests");
-            });
-            document.getElementById("chat-tab").addEventListener("click", () => {
-                //loadTabContent("chatContent", "/Teacher/Chat");
-                loadTabContent("chatContent", "/Chat/Index");
-            });
-            document.addEventListener("click", function(e) {
-                const link = e.target.closest("a[data-chat]");
-                if (link) {
-                    e.preventDefault();
-                    const url = link.getAttribute("href");
-                    loadTabContent("chatContent", url);
-                }
-            });
-            document.addEventListener("submit", function(e) {
-                const form = e.target;
-                if (form.id === "chatSearchForm") {
-                    e.preventDefault();
-                    const url = form.action + "?" + new URLSearchParams(new FormData(form));
-                    loadTabContent("chatContent", url);
-                }
-                if (form.id === "sendMessageForm") {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    fetch(form.action, {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.text())
+            if (chatLink) {
+                e.preventDefault();
+                const url = chatLink.getAttribute("href");
+                loadTabContent("chatContent", url);
+            }
+
+            if (materialsLink) {
+                e.preventDefault();
+                const url = materialsLink.getAttribute("href");
+                loadTabContent("materialsContent", url);
+            }
+        });
+
+
+        document.addEventListener("submit", e => {
+            const form = e.target;
+            e.preventDefault();
+
+            const fetchAndUpdate = (contentId) => {
+                const formData = new FormData(form);
+                fetch(form.action, { method: "POST", body: formData })
+                    .then(res => res.text())
                     .then(html => {
-                        document.getElementById("chatContent").innerHTML = html;
+                        document.getElementById(contentId).innerHTML = html;
+                        const modalEl = form.closest(".modal");
+                        if (modalEl) {
+                            const modal = bootstrap.Modal.getInstance(modalEl);
+                            if (modal) modal.hide();
+                            document.body.classList.remove("modal-open");
+                            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+                        }
                     });
-                }
-            });
-        </script> 
+            };
+
+            if (form.id === "chatSearchForm") {
+                const url = form.action + "?" + new URLSearchParams(new FormData(form));
+                loadTabContent("chatContent", url);
+            } else if (form.id === "sendMessageForm") {
+                fetchAndUpdate("chatContent");
+            } else if (form.hasAttribute("form-materials")) {
+                fetchAndUpdate("materialsContent");
+            } else if (form.hasAttribute("form-schedule")) {
+                fetchAndUpdate("scheduleContent");
+            } else if (form.hasAttribute("course-status")) {
+                fetchAndUpdate("materialsContent");
+            }
+        });
+    </script>
 }

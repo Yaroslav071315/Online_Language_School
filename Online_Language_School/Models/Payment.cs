@@ -20,6 +20,10 @@ namespace Online_Language_School.Models
         public string? PaymentMethod { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? CompletedAt { get; set; }
+        public string? ReceiptImagePath { get; set; } // шлях до файлу-чеку
+        public bool? IsApproved { get; set; } // null = не розглянуто, true = прийнято, false = відхилено
+        public string? RejectReason { get; set; }
+
 
         // Foreign Keys
         [Required]

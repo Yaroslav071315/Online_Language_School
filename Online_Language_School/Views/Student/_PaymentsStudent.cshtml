@@ -18,81 +18,80 @@
         {
             foreach (var payment in Model)
             {
-                        <tr>
-                            <td>@payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>@payment.Course?.Title</td>
-                            <td>@payment.Amount @payment.Currency</td>
-                            <td>
+                <tr>
+                    <td>@payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@payment.Course?.Title</td>
+                    <td>@payment.Amount.ToString("F2") @payment.Currency</td>
+                    <td>
                         @if (payment.Status == "Pending")
                         {
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                            <span class="badge bg-warning text-dark">Pending</span>
                         }
                         else if (payment.Status == "Completed")
                         {
-                                        <span class="badge bg-success">Completed</span>
+                            <span class="badge bg-success">Completed</span>
                         }
                         else
                         {
-                                        <span class="badge bg-secondary">@payment.Status</span>
+                            <span class="badge bg-secondary">@payment.Status</span>
                         }
-                            </td>
-                            <td>
-                                <!-- View button -->
-                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPayment-@payment.Id">
-                                    👁 View
-                                </button>
+                    </td>
+                    <td>
+                        <!-- View button -->
+                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewPayment-@payment.Id">
+                            👁 View
+                        </button>
 
                         @if (payment.Status == "Pending")
                         {
-                                        <button class="btn btn-sm btn-primary">Upload receipt</button>
+                            <button class="btn btn-sm btn-primary">Upload receipt</button>
                         }
                         else
                         {
-                                        <span class="text-muted">-</span>
+                            <span class="text-muted">-</span>
                         }
-                            </td>
-                        </tr>
+                    </td>
+                </tr>
 
-                        <!-- Modal with Bootstrap Card -->
-                        <div class="modal fade" id="viewPayment-@payment.Id" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-md">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Payment #@payment.Id</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Course: @payment.Course?.Title</h5>
-                                                <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">Amount: @payment.Amount @payment.Currency</li>
-                                                    <li class="list-group-item">Status: @payment.Status</li>
-                                                    <li class="list-group-item">Created At: @payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+                <!-- Modal with Bootstrap Card -->
+                <div class="modal fade" id="viewPayment-@payment.Id" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Payment #@payment.Id</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Course: @payment.Course?.Title</h5>
+                                        <ul class="list-group list-group-flush">
                                                     <li class="list-group-item">Payment Id: @payment.Id</li>
-                                                    <li class="list-group-item">Course Id: @payment.CourseId</li>
-                                                    <li class="list-group-item">User Id: @payment.UserId</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                @if (payment.Status == "Pending")
-                                {
-                                                <button class="btn btn-primary">Upload receipt</button>
-                                }
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <li class="list-group-item">Amount: @payment.Amount.ToString("F2") @payment.Currency</li>
+                                            <li class="list-group-item">Status: @payment.Status</li>
+                                            <li class="list-group-item">Created At: @payment.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+                                            <li class="list-group-item">Course: @payment.Course.Title</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
+                            <div class="modal-footer">
+                                @if (payment.Status == "Pending")
+                                {
+                                    <button class="btn btn-primary">Upload receipt</button>
+                                }
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
                         </div>
+                    </div>
+                </div>
             }
         }
         else
         {
-                <tr>
-                    <td colspan="5" class="text-center text-muted">No payments found.</td>
-                </tr>
+            <tr>
+                <td colspan="5" class="text-center text-muted">No payments found.</td>
+            </tr>
         }
     </tbody>
 </table>
